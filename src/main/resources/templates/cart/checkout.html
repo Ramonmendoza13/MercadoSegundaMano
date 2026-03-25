@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Tramitar pedido | Mercado Segunda Mano</title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main class="container my-4" style="max-width: 800px;">
+    <h1 class="section-title">Tramitar pedido</h1>
+
+    <!-- Nota informativa -->
+    <div class="alert alert-info border-0 shadow-sm mb-4">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <strong>Simulación de compra:</strong> Este es un marketplace de demostración. No se realizará ningún cargo real ni se procesará ninguna pasarela de pago.
+    </div>
+
+    <div class="row g-4">
+        <!-- Formulario de envío -->
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm rounded-3 p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt me-2 text-primary"></i>Dirección de envío</h5>
+                <form method="POST" th:action="@{/cart/checkout}" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="shippingAddress" class="form-label fw-semibold">
+                            Dirección completa <span class="text-danger">*</span>
+                        </label>
+                        <textarea id="shippingAddress" name="shippingAddress" class="form-control" rows="4"
+                                  placeholder="Calle, número, piso, ciudad, código postal..."
+                                  required></textarea>
+                        <div class="invalid-feedback">Por favor introduce una dirección de envío.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-bag-check me-2"></i>Confirmar compra
+                    </button>
+                    <a th:href="@{/cart}" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-arrow-left me-1"></i>Volver al carrito
+                    </a>
+                </form>
+            </div>
+        </div>
+
+        <!-- Resumen del pedido -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm rounded-3 p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2 text-primary"></i>Resumen</h5>
+                <div th:each="item : ${cart.items}" class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom">
+                    <img th:if="${not #lists.isEmpty(item.product.imagePaths)}"
+                         th:src="@{/uploads/{img}(img=${item.product.imagePaths[0]})}"
+                         class="rounded"
+                         style="width:44px; height:44px; object-fit:cover;"
+                         th:alt="${item.product.title}">
+                    <div th:if="${#lists.isEmpty(item.product.imagePaths)}"
+                         class="rounded bg-light d-flex align-items-center justify-content-center"
+                         style="width:44px; height:44px; flex-shrink:0;">
+                        <i class="bi bi-image text-muted small"></i>
+                    </div>
+                    <div class="flex-grow-1 min-width-0">
+                        <div class="small fw-semibold text-truncate" th:text="${item.product.title}">Producto</div>
+                    </div>
+                    <div class="small fw-bold text-nowrap"
+                         th:text="${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <strong class="fs-5">Total</strong>
+                    <strong class="fs-5 text-primary"
+                            th:text="${#numbers.formatDecimal(cart.total, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+<script>
+    (function() {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Mi carrito | Mercado Segunda Mano</title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main class="container my-4" style="max-width: 900px;">
+    <h1 class="section-title">Mi carrito</h1>
+
+    <!-- Carrito con items -->
+    <div th:if="${cart != null and not #lists.isEmpty(cart.items)}">
+        <div class="row g-4">
+            <!-- Lista de items -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+                    <div th:each="item : ${cart.items}" class="p-3 border-bottom d-flex align-items-center gap-3">
+                        <!-- Imagen -->
+                        <div style="flex-shrink:0;">
+                            <img th:if="${not #lists.isEmpty(item.product.imagePaths)}"
+                                 th:src="@{/uploads/{img}(img=${item.product.imagePaths[0]})}"
+                                 class="rounded"
+                                 style="width:80px; height:80px; object-fit:cover;"
+                                 th:alt="${item.product.title}">
+                            <div th:if="${#lists.isEmpty(item.product.imagePaths)}"
+                                 class="rounded bg-light d-flex align-items-center justify-content-center"
+                                 style="width:80px; height:80px;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                        </div>
+                        <!-- Info producto -->
+                        <div class="flex-grow-1">
+                            <a th:href="@{/products/{id}(id=${item.product.id})}"
+                               class="text-decoration-none text-dark fw-semibold"
+                               th:text="${item.product.title}">Producto</a>
+                            <div class="text-muted small" th:text="${item.product.seller?.username}">Vendedor</div>
+                            <div class="price mt-1 fs-5"
+                                 th:text="${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+                        </div>
+                        <!-- Botón eliminar -->
+                        <form method="POST" th:action="@{/cart/remove/{itemId}(itemId=${item.id})}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Quitar del carrito">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Seguir comprando -->
+                <a th:href="@{/products}" class="btn btn-outline-primary mt-3">
+                    <i class="bi bi-arrow-left me-1"></i>Seguir comprando
+                </a>
+            </div>
+
+            <!-- Resumen -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-3 p-4">
+                    <h5 class="fw-bold mb-3">Resumen del pedido</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Productos</span>
+                        <span th:text="${#lists.size(cart.items)}">0</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong class="fs-5">Total</strong>
+                        <strong class="fs-5 text-primary"
+                                th:text="${#numbers.formatDecimal(cart.total, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</strong>
+                    </div>
+                    <form method="POST" th:action="@{/cart/checkout}">
+                        <input type="hidden" name="shippingAddress" value="Dirección por defecto"/>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">
+                            <i class="bi bi-credit-card me-2"></i>Tramitar pedido
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carrito vacío -->
+    <div th:if="${cart == null or #lists.isEmpty(cart.items)}" class="text-center py-5">
+        <i class="bi bi-cart-x display-1 text-muted"></i>
+        <h4 class="mt-3 text-muted">Tu carrito está vacío</h4>
+        <p class="text-muted">Explora el catálogo y añade productos a tu carrito.</p>
+        <a th:href="@{/products}" class="btn btn-primary mt-2">
+            <i class="bi bi-grid me-1"></i>Ver catálogo
+        </a>
+    </div>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

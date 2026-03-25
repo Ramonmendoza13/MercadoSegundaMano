@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+
+  app:
+    build: .
+    container_name: mercado_app
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - h2_data:/app/data
+      # Volumen para las imagenes subidas
+      - images_data:/app/uploads
+
+volumes:
+  h2_data:
+  images_data:

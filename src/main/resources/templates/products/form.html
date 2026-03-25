@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="${product != null ? 'Editar anuncio' : 'Nuevo anuncio'} + ' | Mercado Segunda Mano'">
+        Anuncio | Mercado Segunda Mano
+    </title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main class="container my-4" style="max-width: 780px;">
+    <!-- Título -->
+    <h1 class="section-title" th:text="${product != null ? 'Editar anuncio' : 'Publicar nuevo anuncio'}">Anuncio</h1>
+
+    <!-- Formulario -->
+    <form th:action="${product != null ? '/my/products/' + product.id + '/edit' : '/my/products'}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="needs-validation"
+          novalidate>
+
+        <input type="hidden"
+               th:name="${_csrf.parameterName}"
+               th:value="${_csrf.token}"/>
+
+        <!-- ==== CAMPOS COMUNES ==== -->
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+            <div class="card-header bg-white border-0 pt-3 pb-0">
+                <h5 class="fw-bold mb-0"><i class="bi bi-info-circle me-2 text-primary"></i>Información general</h5>
+            </div>
+            <div class="card-body">
+                <!-- Categoría -->
+                <div class="mb-3">
+                    <label for="category" class="form-label fw-semibold">Categoría <span class="text-danger">*</span></label>
+                    <select id="category" name="category" class="form-select" required onchange="toggleCategoryFields(this.value)">
+                        <option value="" disabled th:selected="${product == null}">-- Selecciona una categoría --</option>
+                        <option th:each="cat : ${categories}"
+                                th:value="${cat}"
+                                th:text="${cat.displayName}"
+                                th:selected="${product != null and product.category == cat}">
+                        </option>
+                    </select>
+                    <div class="invalid-feedback">Por favor selecciona una categoría.</div>
+                </div>
+
+                <!-- Título -->
+                <div class="mb-3">
+                    <label for="title" class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
+                    <input type="text" id="title" name="title" class="form-control"
+                           placeholder="Ej: iPhone 14 Pro en perfecto estado"
+                           th:value="${product?.title}" required maxlength="150">
+                    <div class="invalid-feedback">El título es obligatorio.</div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-3">
+                    <label for="description" class="form-label fw-semibold">Descripción <span class="text-danger">*</span></label>
+                    <textarea id="description" name="description" class="form-control" rows="4"
+                              placeholder="Describe el estado, características y cualquier detalle relevante..."
+                              th:text="${product?.description}" required></textarea>
+                    <div class="invalid-feedback">La descripción es obligatoria.</div>
+                </div>
+
+                <!-- Precio -->
+                <div class="mb-3">
+                    <label for="price" class="form-label fw-semibold">Precio (€) <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="number" id="price" name="price" class="form-control"
+                               placeholder="0.00" step="0.01" min="0"
+                               th:value="${product?.price}" required>
+                        <span class="input-group-text">€</span>
+                    </div>
+                    <div class="invalid-feedback">Introduce un precio válido.</div>
+                </div>
+
+                <!-- Imágenes -->
+                <div class="mb-3">
+                    <label for="images" class="form-label fw-semibold">Imágenes</label>
+                    <!-- Preview imágenes actuales en edición -->
+                    <div th:if="${product != null and not #lists.isEmpty(product.imagePaths)}" class="mb-2">
+                        <p class="small text-muted mb-1">Imágenes actuales:</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <div th:each="img : ${product.imagePaths}" class="position-relative">
+                                <img th:src="@{/uploads/{img}(img=${img})}"
+                                     class="rounded border"
+                                     style="width: 80px; height: 80px; object-fit: cover;"
+                                     alt="Imagen actual">
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="images" name="images" class="form-control"
+                           accept="image/*" multiple>
+                    <div class="form-text">
+                        <span th:if="${product != null}">Sube nuevas imágenes para reemplazar las actuales.</span>
+                        <span th:if="${product == null}">Puedes subir varias imágenes a la vez. La primera será la imagen principal.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==== SECCIÓN VEHÍCULO ==== -->
+        <div id="section-vehicle" class="card border-0 shadow-sm rounded-3 mb-4" style="display:none;">
+            <div class="card-header bg-white border-0 pt-3 pb-0">
+                <h5 class="fw-bold mb-0"><i class="bi bi-car-front me-2 text-primary"></i>Datos del vehículo</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="vBrand" class="form-label fw-semibold">Marca</label>
+                        <input type="text" id="vBrand" name="brand" class="form-control"
+                               placeholder="Ej: Toyota" th:value="${product?.brand}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="vModel" class="form-label fw-semibold">Modelo</label>
+                        <input type="text" id="vModel" name="vehicleModel" class="form-control"
+                               placeholder="Ej: Corolla" th:value="${product?.model}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="vYear" class="form-label fw-semibold">Año</label>
+                        <input type="number" id="vYear" name="year" class="form-control"
+                               placeholder="Ej: 2019" min="1900" max="2100"
+                               th:value="${product?.year}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="vMileage" class="form-label fw-semibold">Kilometraje (km)</label>
+                        <input type="number" id="vMileage" name="mileage" class="form-control"
+                               placeholder="Ej: 85000" min="0"
+                               th:value="${product?.mileage}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="vFuel" class="form-label fw-semibold">Combustible</label>
+                        <select id="vFuel" name="fuelType" class="form-select">
+                            <option value="">-- Selecciona --</option>
+                            <option th:each="fuel : ${fuelTypes}"
+                                    th:value="${fuel}"
+                                    th:text="${fuel.displayName}"
+                                    th:selected="${product?.fuelType == fuel}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="vGearbox" class="form-label fw-semibold">Cambio</label>
+                        <select id="vGearbox" name="gearboxType" class="form-select">
+                            <option value="">-- Selecciona --</option>
+                            <option th:each="gear : ${gearboxTypes}"
+                                    th:value="${gear}"
+                                    th:text="${gear.displayName}"
+                                    th:selected="${product?.gearboxType == gear}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="vDoors" class="form-label fw-semibold">Puertas</label>
+                        <input type="number" id="vDoors" name="doors" class="form-control"
+                               placeholder="Ej: 5" min="2" max="10"
+                               th:value="${product?.doors}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==== SECCIÓN ROPA ==== -->
+        <div id="section-clothing" class="card border-0 shadow-sm rounded-3 mb-4" style="display:none;">
+            <div class="card-header bg-white border-0 pt-3 pb-0">
+                <h5 class="fw-bold mb-0"><i class="bi bi-bag me-2 text-primary"></i>Datos de la prenda</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="cBrand" class="form-label fw-semibold">Marca</label>
+                        <input type="text" id="cBrand" name="brand" class="form-control"
+                               placeholder="Ej: Zara" th:value="${product?.brand}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cSize" class="form-label fw-semibold">Talla</label>
+                        <input type="text" id="cSize" name="size" class="form-control"
+                               placeholder="Ej: M, 42, XL..." th:value="${product?.size}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cColor" class="form-label fw-semibold">Color</label>
+                        <input type="text" id="cColor" name="color" class="form-control"
+                               placeholder="Ej: Azul marino" th:value="${product?.color}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cGender" class="form-label fw-semibold">Género</label>
+                        <select id="cGender" name="gender" class="form-select">
+                            <option value="">-- Selecciona --</option>
+                            <option value="Hombre" th:selected="${product?.gender == 'Hombre'}">Hombre</option>
+                            <option value="Mujer" th:selected="${product?.gender == 'Mujer'}">Mujer</option>
+                            <option value="Unisex" th:selected="${product?.gender == 'Unisex'}">Unisex</option>
+                            <option value="Niños" th:selected="${product?.gender == 'Niños'}">Niños</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==== SECCIÓN HOGAR ==== -->
+        <div id="section-home" class="card border-0 shadow-sm rounded-3 mb-4" style="display:none;">
+            <div class="card-header bg-white border-0 pt-3 pb-0">
+                <h5 class="fw-bold mb-0"><i class="bi bi-house me-2 text-primary"></i>Datos del artículo</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="hCondition" class="form-label fw-semibold">Condición</label>
+                        <select id="hCondition" name="condition" class="form-select">
+                            <option value="">-- Selecciona --</option>
+                            <option th:each="cond : ${homeConditions}"
+                                    th:value="${cond}"
+                                    th:text="${cond.displayName}"
+                                    th:selected="${product?.homeCondition == cond}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="hDimensions" class="form-label fw-semibold">Dimensiones</label>
+                        <input type="text" id="hDimensions" name="dimensions" class="form-control"
+                               placeholder="Ej: 120x60x75 cm" th:value="${product?.dimensions}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex gap-3 justify-content-end">
+            <a th:href="@{/my/products}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-lg me-1"></i>Cancelar
+            </a>
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-check-lg me-1"></i>
+                <span th:text="${product != null ? 'Guardar cambios' : 'Publicar anuncio'}">Publicar</span>
+            </button>
+        </div>
+    </form>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+
+<script th:inline="javascript">
+    // Valor inicial de la categoría (en edición)
+    var initialCategory = /*[[${product?.category?.name()}]]*/ null;
+
+    function toggleCategoryFields(value) {
+        document.getElementById('section-vehicle').style.display = 'none';
+        document.getElementById('section-clothing').style.display = 'none';
+        document.getElementById('section-home').style.display = 'none';
+
+        if (value === 'VEHICLE') {
+            document.getElementById('section-vehicle').style.display = 'block';
+        } else if (value === 'CLOTHING') {
+            document.getElementById('section-clothing').style.display = 'block';
+        } else if (value === 'HOME') {
+            document.getElementById('section-home').style.display = 'block';
+        }
+    }
+
+    // Mostrar sección correcta al cargar si es edición
+    if (initialCategory) {
+        toggleCategoryFields(initialCategory);
+    }
+
+    // Bootstrap client-side validation
+    (function() {
+        'use strict';
+        var forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+</body>
+</html>

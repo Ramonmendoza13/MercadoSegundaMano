@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Historial de pedidos | Mercado Segunda Mano</title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main class="container my-4">
+    <h1 class="section-title">Mis pedidos</h1>
+
+    <!-- Lista de pedidos -->
+    <div th:if="${not #lists.isEmpty(orders)}">
+        <div class="card border-0 shadow-sm rounded-3 mb-3" th:each="order : ${orders}">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <div>
+                    <span class="badge bg-success me-2">Completado</span>
+                    <span class="text-muted small"
+                          th:text="'Pedido del ' + ${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                </div>
+                <strong class="text-primary fs-5"
+                        th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</strong>
+            </div>
+            <div class="card-body">
+                <!-- Dirección de envío -->
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-geo-alt me-1"></i>
+                    <strong>Dirección de envío:</strong>
+                    <span th:text="${order.shippingAddress}">—</span>
+                </p>
+                <!-- Productos del pedido -->
+                <div class="row g-3">
+                    <div class="col-sm-6 col-md-4" th:each="product : ${order.products}">
+                        <div class="d-flex align-items-center gap-3 p-2 rounded bg-light">
+                            <img th:if="${not #lists.isEmpty(product.imagePaths)}"
+                                 th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
+                                 class="rounded"
+                                 style="width:50px; height:50px; object-fit:cover;"
+                                 th:alt="${product.title}">
+                            <div th:if="${#lists.isEmpty(product.imagePaths)}"
+                                 class="rounded bg-secondary d-flex align-items-center justify-content-center"
+                                 style="width:50px; height:50px; flex-shrink:0;">
+                                <i class="bi bi-image text-white small"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="small fw-semibold text-truncate" th:text="${product.title}">Producto</div>
+                                <div class="small text-primary fw-bold"
+                                     th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sin pedidos -->
+    <div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
+        <i class="bi bi-clock-history display-1 text-muted"></i>
+        <h4 class="mt-3 text-muted">Aún no has realizado ningún pedido</h4>
+        <p class="text-muted">Explora el catálogo y encuentra algo que te guste.</p>
+        <a th:href="@{/products}" class="btn btn-primary mt-2">
+            <i class="bi bi-grid me-1"></i>Ver catálogo
+        </a>
+    </div>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

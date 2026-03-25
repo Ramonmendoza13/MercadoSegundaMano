@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Inicio | Mercado Segunda Mano</title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            padding: 5rem 0;
+        }
+        .category-card {
+            border: none;
+            border-radius: 12px;
+            color: white;
+            transition: transform 0.25s, box-shadow 0.25s;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
+        .category-vehicle { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .category-clothing { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .category-home { background: linear-gradient(135deg, #4facfe, #00c9ff); }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main>
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="container text-center text-white">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-shop me-2"></i>Mercado de Segunda Mano
+            </h1>
+            <p class="lead mb-4" style="opacity:0.85;">
+                Compra y vende con miles de personas.<br>
+                Vehículos, ropa, hogar y mucho más.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
+                <a th:href="@{/products}" class="btn btn-light btn-lg fw-semibold shadow-sm">
+                    <i class="bi bi-grid me-1"></i>Ver catálogo
+                </a>
+                <a th:href="@{/my/products/new}" class="btn btn-outline-light btn-lg" sec:authorize="isAuthenticated()">
+                    <i class="bi bi-plus-circle me-1"></i>Publicar anuncio
+                </a>
+                <a th:href="@{/register}" class="btn btn-outline-light btn-lg" sec:authorize="isAnonymous()">
+                    <i class="bi bi-person-plus me-1"></i>Únete gratis
+                </a>
+            </div>
+            <!-- Buscador hero -->
+            <form class="mx-auto" style="max-width: 520px;" method="GET" th:action="@{/products}">
+                <div class="input-group input-group-lg shadow-sm">
+                    <input type="search" name="query" class="form-control" placeholder="¿Qué estás buscando?">
+                    <button class="btn btn-primary fw-semibold" type="submit">
+                        <i class="bi bi-search me-1"></i>Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- CATEGORÍAS -->
+    <section class="container my-5">
+        <h2 class="section-title">Explorar por categorías</h2>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <a th:href="@{/products(category='VEHICLE')}" class="text-decoration-none d-block">
+                    <div class="category-card category-vehicle p-4 text-center">
+                        <i class="bi bi-car-front" style="font-size: 2.5rem;"></i>
+                        <h5 class="fw-bold mt-2 mb-1">Vehículos</h5>
+                        <p class="small mb-0" style="opacity:0.8;">Coches, motos y más</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/products(category='CLOTHING')}" class="text-decoration-none d-block">
+                    <div class="category-card category-clothing p-4 text-center">
+                        <i class="bi bi-bag" style="font-size: 2.5rem;"></i>
+                        <h5 class="fw-bold mt-2 mb-1">Ropa</h5>
+                        <p class="small mb-0" style="opacity:0.8;">Moda de segunda mano</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4">
+                <a th:href="@{/products(category='HOME')}" class="text-decoration-none d-block">
+                    <div class="category-card category-home p-4 text-center">
+                        <i class="bi bi-house" style="font-size: 2.5rem;"></i>
+                        <h5 class="fw-bold mt-2 mb-1">Hogar</h5>
+                        <p class="small mb-0" style="opacity:0.8;">Muebles y decoración</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ÚLTIMOS ANUNCIOS -->
+    <section class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title mb-0">Últimos anuncios</h2>
+            <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">
+                Ver todos <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4" th:if="${not #lists.isEmpty(productos)}">
+            <div class="col-sm-6 col-md-4 col-lg-3" th:each="product : ${productos}">
+                <div class="card product-card h-100">
+                    <!-- Imagen -->
+                    <div style="position: relative; height: 200px; background: #eee;">
+                        <img th:if="${not #lists.isEmpty(product.imagePaths)}"
+                             th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
+                             th:alt="${product.title}"
+                             style="width:100%; height:200px; object-fit:cover;">
+                        <div th:if="${#lists.isEmpty(product.imagePaths)}"
+                             class="d-flex align-items-center justify-content-center bg-light w-100 h-100">
+                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                        </div>
+                        <span class="badge position-absolute top-0 end-0 m-2 fs-6"
+                              th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
+                              th:text="${product.status.displayName}">Estado</span>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1 text-truncate" th:text="${product.title}">Título</h6>
+                        <div class="price mb-3"
+                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+                        <a th:href="@{/products/{id}(id=${product.id})}"
+                           class="btn btn-primary btn-sm mt-auto stretched-link">
+                            Ver anuncio <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado vacío -->
+        <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">Aún no hay productos publicados</h4>
+            <p class="text-muted">¡Sé el primero en publicar un anuncio!</p>
+            <a th:href="@{/my/products/new}" class="btn btn-primary mt-2" sec:authorize="isAuthenticated()">
+                <i class="bi bi-plus-circle me-1"></i>Publicar anuncio
+            </a>
+            <a th:href="@{/register}" class="btn btn-primary mt-2" sec:authorize="isAnonymous()">
+                <i class="bi bi-person-plus me-1"></i>Registrarse gratis
+            </a>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

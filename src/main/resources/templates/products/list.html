@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Catálogo | Mercado Segunda Mano</title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main class="container my-4">
+
+    <!-- CABECERA Y BUSCADOR -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="section-title">Catálogo de productos</h1>
+        </div>
+        <div class="col-md-8 col-lg-6">
+            <form method="GET" th:action="@{/products}" class="d-flex gap-2">
+                <input type="search" name="query" class="form-control"
+                       placeholder="Buscar por título, descripción..."
+                       th:value="${query}">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-search"></i>
+                </button>
+                <a th:if="${query != null and !#strings.isEmpty(query)}"
+                   th:href="@{/products}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- FILTROS LATERALES -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 mb-3">
+                <div class="card-header bg-white fw-bold border-0 pt-3">
+                    <i class="bi bi-funnel me-2 text-primary"></i>Filtrar por categoría
+                </div>
+                <div class="list-group list-group-flush px-2 pb-3">
+                    <a th:href="@{/products}"
+                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
+                       th:classappend="${param.category == null} ? ' active' : ''">
+                        <i class="bi bi-grid me-2"></i>Todos
+                    </a>
+                    <a th:href="@{/products(category='VEHICLE')}"
+                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'VEHICLE'} ? ' active' : ''">
+                        <i class="bi bi-car-front me-2"></i>Vehículos
+                    </a>
+                    <a th:href="@{/products(category='CLOTHING')}"
+                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'CLOTHING'} ? ' active' : ''">
+                        <i class="bi bi-bag me-2"></i>Ropa
+                    </a>
+                    <a th:href="@{/products(category='HOME')}"
+                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'HOME'} ? ' active' : ''">
+                        <i class="bi bi-house me-2"></i>Hogar
+                    </a>
+                </div>
+            </div>
+
+            <!-- CTA publicar -->
+            <div class="card border-0 shadow-sm rounded-3 text-center p-3" sec:authorize="isAuthenticated()">
+                <i class="bi bi-plus-circle display-5 text-primary mb-2"></i>
+                <p class="small text-muted mb-2">¿Tienes algo que vender?</p>
+                <a th:href="@{/my/products/new}" class="btn btn-primary btn-sm">Publicar anuncio</a>
+            </div>
+        </div>
+
+        <!-- LISTADO DE PRODUCTOS -->
+        <div class="col-lg-9">
+            <!-- Resultado y query activo -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <p class="text-muted mb-0 small">
+                    <span th:if="${query != null and !#strings.isEmpty(query)}">
+                        Resultados para <strong th:text="'«' + ${query} + '»'"></strong> —
+                    </span>
+                    <strong th:text="${#lists.size(productos)}">0</strong> producto(s) encontrado(s)
+                </p>
+            </div>
+
+            <!-- Grid -->
+            <div class="row g-4" th:if="${not #lists.isEmpty(productos)}">
+                <div class="col-sm-6 col-xl-4" th:each="product : ${productos}">
+                    <div class="card product-card h-100">
+                        <div style="position: relative; height: 200px; background: #f0f0f0;">
+                            <img th:if="${not #lists.isEmpty(product.imagePaths)}"
+                                 th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
+                                 th:alt="${product.title}"
+                                 style="width:100%; height:200px; object-fit:cover;">
+                            <div th:if="${#lists.isEmpty(product.imagePaths)}"
+                                 class="d-flex align-items-center justify-content-center w-100 h-100">
+                                <i class="bi bi-image text-muted" style="font-size:3rem;"></i>
+                            </div>
+                            <span class="badge position-absolute top-0 end-0 m-2"
+                                  th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
+                                  th:text="${product.status.displayName}">Estado</span>
+                        </div>
+                        <div class="card-body d-flex flex-column p-3">
+                            <h6 class="card-title text-truncate mb-1 fw-semibold"
+                                th:text="${product.title}">Título</h6>
+                            <!-- Categoría badge -->
+                            <span class="badge bg-secondary mb-2 me-auto"
+                                  th:text="${product.categoryEnum?.displayName ?: ''}">Categoría</span>
+                            <div class="price mb-1"
+                                 th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">
+                                0,00 €
+                            </div>
+                            <small class="text-muted mb-3"
+                                   th:text="${'Publicado el ' + #temporals.format(product.createdAt, 'dd/MM/yyyy')}">Fecha</small>
+                            <a th:href="@{/products/{id}(id=${product.id})}"
+                               class="btn btn-primary btn-sm mt-auto stretched-link">
+                                Ver detalles <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sin resultados -->
+            <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
+                <i class="bi bi-search display-1 text-muted"></i>
+                <h4 class="mt-3 text-muted">No se encontraron productos</h4>
+                <p class="text-muted"
+                   th:if="${query != null and !#strings.isEmpty(query)}"
+                   th:text="'No hay resultados para «' + ${query} + '». Prueba con otra búsqueda.'">
+                </p>
+                <p class="text-muted" th:if="${query == null or #strings.isEmpty(query)}">
+                    Aún no hay productos en esta categoría.
+                </p>
+                <a th:href="@{/products}" class="btn btn-outline-primary mt-2">Ver todos los productos</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>

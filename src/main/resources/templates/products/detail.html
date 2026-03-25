@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="${product.title} + ' | Mercado Segunda Mano'">Detalle | Mercado Segunda Mano</title>
+    <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+    <style>
+        .detail-price { font-size: 2rem; font-weight: 800; color: #2c3e50; }
+        .detail-label { font-weight: 600; color: #6c757d; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .seller-card { background: #f8f9fa; border-radius: 12px; }
+        .carousel-inner img { height: 420px; object-fit: cover; border-radius: 8px; }
+        .carousel-placeholder { height: 420px; background: #e9ecef; border-radius: 8px; }
+        .spec-item { padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0; }
+        .spec-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+<div th:replace="~{layout/base :: navbar}"></div>
+<div th:replace="~{layout/base :: flashMessages}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/products}">Catálogo</a></li>
+            <li class="breadcrumb-item active" th:text="${product.title}">Producto</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- COLUMNA IZQUIERDA: Imágenes -->
+        <div class="col-lg-7">
+            <!-- Carrusel de imágenes -->
+            <div th:if="${not #lists.isEmpty(product.imagePaths)}"
+                 id="productCarousel" class="carousel slide shadow-sm rounded-3" data-bs-ride="carousel">
+                <div class="carousel-indicators" th:if="${#lists.size(product.imagePaths) > 1}">
+                    <button th:each="img, iter : ${product.imagePaths}"
+                            type="button" data-bs-target="#productCarousel"
+                            th:data-bs-slide-to="${iter.index}"
+                            th:classappend="${iter.index == 0} ? ' active' : ''">
+                    </button>
+                </div>
+                <div class="carousel-inner">
+                    <div th:each="img, iter : ${product.imagePaths}"
+                         class="carousel-item"
+                         th:classappend="${iter.index == 0} ? ' active' : ''">
+                        <img th:src="@{/uploads/{img}(img=${img})}"
+                             th:alt="${product.title}"
+                             class="d-block w-100">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev"
+                        th:if="${#lists.size(product.imagePaths) > 1}">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next"
+                        th:if="${#lists.size(product.imagePaths) > 1}">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            <!-- Sin imagen -->
+            <div th:if="${#lists.isEmpty(product.imagePaths)}"
+                 class="carousel-placeholder d-flex align-items-center justify-content-center shadow-sm">
+                <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Info + acciones -->
+        <div class="col-lg-5">
+            <!-- Estado -->
+            <span class="badge fs-6 mb-2"
+                  th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
+                  th:text="${product.status.displayName}">Estado</span>
+
+            <h1 class="fw-bold fs-3 mb-2" th:text="${product.title}">Título del producto</h1>
+
+            <!-- Precio -->
+            <div class="detail-price mb-3"
+                 th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+
+            <!-- Fecha publicación -->
+            <p class="text-muted small mb-3">
+                <i class="bi bi-calendar3 me-1"></i>
+                Publicado el <span th:text="${#temporals.format(product.createdAt, 'dd/MM/yyyy')}">Fecha</span>
+            </p>
+
+            <!-- Descripción -->
+            <div class="mb-4">
+                <p class="detail-label mb-1">Descripción</p>
+                <p th:text="${product.description}" style="line-height: 1.6;">Descripción del producto.</p>
+            </div>
+
+            <!-- Especificaciones según tipo de producto -->
+
+            <!-- VEHÍCULO -->
+            <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.VehicleProduct)}"
+                 class="card border-0 bg-light rounded-3 p-3 mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-car-front me-2 text-primary"></i>Datos del vehículo</h6>
+                <div class="row g-2">
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Marca</div>
+                        <div class="fw-semibold" th:text="${product.brand}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Modelo</div>
+                        <div class="fw-semibold" th:text="${product.model}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Año</div>
+                        <div class="fw-semibold" th:text="${product.year}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Kilometraje</div>
+                        <div class="fw-semibold" th:text="${#numbers.formatInteger(product.mileage, 1, 'COMMA')} + ' km'">— km</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Combustible</div>
+                        <div class="fw-semibold" th:text="${product.fuelType.displayName}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Cambio</div>
+                        <div class="fw-semibold" th:text="${product.gearboxType.displayName}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Puertas</div>
+                        <div class="fw-semibold" th:text="${product.doors}">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROPA -->
+            <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.ClothingProduct)}"
+                 class="card border-0 bg-light rounded-3 p-3 mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-bag me-2 text-primary"></i>Datos de la prenda</h6>
+                <div class="row g-2">
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Marca</div>
+                        <div class="fw-semibold" th:text="${product.brand}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Talla</div>
+                        <div class="fw-semibold" th:text="${product.size}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Color</div>
+                        <div class="fw-semibold" th:text="${product.color}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Género</div>
+                        <div class="fw-semibold" th:text="${product.gender}">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HOGAR -->
+            <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.HomeProduct)}"
+                 class="card border-0 bg-light rounded-3 p-3 mb-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-house me-2 text-primary"></i>Datos del artículo</h6>
+                <div class="row g-2">
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Condición</div>
+                        <div class="fw-semibold" th:text="${product.homeCondition.displayName}">—</div>
+                    </div>
+                    <div class="col-6 spec-item">
+                        <div class="detail-label">Dimensiones</div>
+                        <div class="fw-semibold" th:text="${product.dimensions}">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCIONES -->
+            <!-- Añadir al carrito (solo autenticado, solo disponible, solo si no es el dueño) -->
+            <div sec:authorize="isAuthenticated()">
+                <form th:if="${product.status.name() == 'AVAILABLE' and product.seller.username != #authentication.name}"
+                      method="POST" th:action="@{/cart/add/{id}(id=${product.id})}">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
+                        <i class="bi bi-cart-plus me-2"></i>Añadir al carrito
+                    </button>
+                </form>
+                <div th:if="${product.status.name() == 'SOLD'}"
+                     class="alert alert-secondary text-center mb-2">
+                    <i class="bi bi-lock me-1"></i>Este producto ya ha sido vendido
+                </div>
+            </div>
+            <!-- Enlace para anónimos -->
+            <div sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="btn btn-primary btn-lg w-100 mb-2">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Inicia sesión para comprar
+                </a>
+            </div>
+
+            <!-- Acciones del propietario -->
+            <div sec:authorize="isAuthenticated()"
+                 th:if="${product.seller.username == #authentication.name}"
+                 class="d-flex gap-2">
+                <a th:href="@{/my/products/{id}/edit(id=${product.id})}"
+                   class="btn btn-outline-primary flex-fill">
+                    <i class="bi bi-pencil me-1"></i>Editar
+                </a>
+                <form method="POST" th:action="@{/my/products/{id}/delete(id=${product.id})}"
+                      onsubmit="return confirm('¿Seguro que quieres eliminar este anuncio?')">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i>Borrar
+                    </button>
+                </form>
+            </div>
+
+            <!-- INFO VENDEDOR -->
+            <div class="seller-card p-3 mt-4 d-flex align-items-center gap-3">
+                <img th:if="${product.seller.avatarPath != null and !#strings.isEmpty(product.seller.avatarPath)}"
+                     th:src="@{/uploads/{img}(img=${product.seller.avatarPath})}"
+                     class="rounded-circle shadow-sm"
+                     style="width: 56px; height: 56px; object-fit: cover;"
+                     alt="Avatar vendedor">
+                <div th:if="${product.seller.avatarPath == null or #strings.isEmpty(product.seller.avatarPath)}"
+                     class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                     style="width: 56px; height: 56px; flex-shrink: 0;">
+                    <i class="bi bi-person-fill text-white fs-4"></i>
+                </div>
+                <div>
+                    <p class="detail-label mb-0">Vendedor</p>
+                    <p class="fw-bold mb-0" th:text="${product.seller.username}">Vendedor</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{layout/base :: footer}"></div>
+<div th:replace="~{layout/base :: scripts}"></div>
+</body>
+</html>
