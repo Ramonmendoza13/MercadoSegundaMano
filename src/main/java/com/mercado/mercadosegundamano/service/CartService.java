@@ -105,7 +105,7 @@ public class CartService {
     // Vacia completamente el carrito.
     // Se llama despues de completar una compra.
     public void clearCart(Cart cart) {
+        cartItemRepository.deleteAll(cart.getItems());
         cart.getItems().clear();
-        cartRepository.save(cart);
     }
 }

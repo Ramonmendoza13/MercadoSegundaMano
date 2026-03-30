@@ -22,25 +22,99 @@
 
     <div class="row g-4">
         <!-- Formulario de envío -->
+        <!-- FORMULARIO -->
         <div class="col-md-7">
             <div class="card border-0 shadow-sm rounded-3 p-4">
-                <h5 class="fw-bold mb-3"><i class="bi bi-geo-alt me-2 text-primary"></i>Dirección de envío</h5>
+
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-geo-alt me-2 text-primary"></i>Dirección de envío
+                </h5>
+
                 <form method="POST" th:action="@{/cart/checkout}" class="needs-validation" novalidate>
+
+                    <!-- Dirección -->
                     <div class="mb-3">
-                        <label for="shippingAddress" class="form-label fw-semibold">
-                            Dirección completa <span class="text-danger">*</span>
+                        <label for="street" class="form-label fw-semibold">
+                            Dirección (calle y número)
                         </label>
-                        <textarea id="shippingAddress" name="shippingAddress" class="form-control" rows="4"
-                                  placeholder="Calle, número, piso, ciudad, código postal..."
-                                  required></textarea>
-                        <div class="invalid-feedback">Por favor introduce una dirección de envío.</div>
+                        <input type="text" id="street" name="street"
+                               class="form-control" required>
+                        <div class="invalid-feedback">Introduce la dirección.</div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                        <i class="bi bi-bag-check me-2"></i>Confirmar compra
+
+                    <!-- CP + Ciudad -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="postalCode" class="form-label fw-semibold">
+                                Código Postal
+                            </label>
+                            <input type="text" id="postalCode" name="postalCode"
+                                   class="form-control" required>
+                            <div class="invalid-feedback">Introduce el CP.</div>
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label for="city" class="form-label fw-semibold">
+                                Ciudad
+                            </label>
+                            <input type="text" id="city" name="city"
+                                   class="form-control" required>
+                            <div class="invalid-feedback">Introduce la ciudad.</div>
+                        </div>
+                    </div>
+
+                    <!-- Provincia -->
+                    <div class="mb-3">
+                        <label for="province" class="form-label fw-semibold">
+                            Provincia
+                        </label>
+                        <input type="text" id="province" name="province"
+                               class="form-control" required>
+                        <div class="invalid-feedback">Introduce la provincia.</div>
+                    </div>
+
+                    <!-- Pago -->
+                    <hr>
+                    <h6 class="fw-bold mt-3">Pago (simulado)</h6>
+
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label">
+                            Número de tarjeta
+                        </label>
+                        <input type="text" id="cardNumber" name="cardNumber"
+                               class="form-control" required>
+                        <div class="invalid-feedback">Introduce la tarjeta.</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="expiry" class="form-label">
+                                Expiración
+                            </label>
+                            <input type="text" id="expiry" name="expiry"
+                                   class="form-control" placeholder="MM/AA" required>
+                            <div class="invalid-feedback">Introduce la fecha.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="cvv" class="form-label">
+                                CVV
+                            </label>
+                            <input type="text" id="cvv" name="cvv"
+                                   class="form-control" required>
+                            <div class="invalid-feedback">Introduce el CVV.</div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">
+                        Confirmar compra
                     </button>
+
                     <a th:href="@{/cart}" class="btn btn-outline-secondary w-100 mt-2">
-                        <i class="bi bi-arrow-left me-1"></i>Volver al carrito
+                        Volver al carrito
                     </a>
+
                 </form>
             </div>
         </div>

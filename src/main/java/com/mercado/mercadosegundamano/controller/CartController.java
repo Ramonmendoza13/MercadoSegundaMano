@@ -1,5 +1,6 @@
 package com.mercado.mercadosegundamano.controller;
 
+import com.mercado.mercadosegundamano.dto.CheckoutForm;
 import com.mercado.mercadosegundamano.model.Cart;
 import com.mercado.mercadosegundamano.model.User;
 import com.mercado.mercadosegundamano.repository.UserRepository;
@@ -98,28 +99,44 @@ public class CartController {
         return "redirect:/cart";
     }
 
+
+
+    @GetMapping("/checkout")
+    public String showCheckout(@AuthenticationPrincipal UserDetails userDetails,
+                               Model model) {
+
+        User currentUser = getCurrentUser(userDetails);
+        Cart cart = cartService.getOrCreateCart(currentUser);
+
+        model.addAttribute("cart", cart);
+
+        return "cart/checkout";
+    }
+
     // ── POST /cart/checkout ───────────────────────────────────────
     // Procesa la compra completa.
     // Recibe la direccion de envio del formulario de checkout.
     @PostMapping("/cart/checkout")
-    public String checkout(@RequestParam String shippingAddress,
+    public String checkout(@ModelAttribute CheckoutForm checkoutForm,
                            @AuthenticationPrincipal UserDetails userDetails,
                            RedirectAttributes redirectAttributes) {
 
         User currentUser = getCurrentUser(userDetails);
 
         try {
-            // checkout es @Transactional: si algo falla Hibernate deshace todo
-            orderService.checkout(currentUser, shippingAddress);
+            // Combinamos los campos en un solo String para la base de datos
+            String fullAddress = checkoutForm.getFullAddress();
+
+            // Llamamos al servicio con la dirección formateada
+            orderService.checkout(currentUser, fullAddress);
 
             redirectAttributes.addFlashAttribute("success",
-                    "Compra realizada correctamente. Pronto recibiras tu pedido.");
+                    "Compra realizada correctamente. ¡Gracias por confiar en nosotros!");
 
-            // Redirigimos al historial de pedidos
             return "redirect:/my/products/orders";
 
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al procesar el pedido: " + e.getMessage());
             return "redirect:/cart";
         }
     }

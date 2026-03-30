@@ -71,12 +71,9 @@
                         <strong class="fs-5 text-primary"
                                 th:text="${#numbers.formatDecimal(cart.total, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</strong>
                     </div>
-                    <form method="POST" th:action="@{/cart/checkout}">
-                        <input type="hidden" name="shippingAddress" value="Dirección por defecto"/>
-                        <button type="submit" class="btn btn-primary w-100 btn-lg">
-                            <i class="bi bi-credit-card me-2"></i>Tramitar pedido
-                        </button>
-                    </form>
+                    <a th:href="@{/checkout}" class="btn btn-primary w-100 btn-lg">
+                        <i class="bi bi-credit-card me-2"></i>Tramitar pedido
+                    </a>
                 </div>
             </div>
         </div>

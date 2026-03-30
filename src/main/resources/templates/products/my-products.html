@@ -69,7 +69,8 @@
                                 th:text="${#temporals.format(product.createdAt, 'dd/MM/yyyy')}">—</td>
                             <!-- Acciones -->
                             <td class="text-center">
-                                <div class="d-flex justify-content-center gap-2">
+                                <div class="d-flex justify-content-center gap-2"
+                                     th:if="${product.status.name() == 'AVAILABLE'}">
                                     <a th:href="@{/my/products/{id}/edit(id=${product.id})}"
                                        class="btn btn-sm btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
