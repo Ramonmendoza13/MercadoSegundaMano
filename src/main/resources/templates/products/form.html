@@ -37,16 +37,28 @@
                 <!-- Categoría -->
                 <div class="mb-3">
                     <label for="category" class="form-label fw-semibold">Categoría <span class="text-danger">*</span></label>
-                    <select id="category" name="category" class="form-select" required onchange="toggleCategoryFields(this.value)">
+                    <select id="category" name="category" class="form-select"
+                            th:required="${product == null}"
+                            th:disabled="${product != null}"
+                            onchange="toggleCategoryFields(this.value)">
                         <option value="" disabled th:selected="${product == null}">-- Selecciona una categoría --</option>
                         <option th:each="cat : ${categories}"
                                 th:value="${cat}"
                                 th:text="${cat.displayName}"
-                                th:selected="${product != null and product.category == cat}">
+                                th:selected="${product != null and product.categoryEnum == cat}">
                         </option>
                     </select>
+                    <!-- En edición el select está disabled y no se envía en el POST,
+                         este hidden mantiene el valor para que el formulario funcione -->
+                    <input type="hidden" th:if="${product != null}"
+                           name="category"
+                           th:value="${product.categoryEnum}"/>
+                    <div th:if="${product != null}" class="form-text text-muted">
+                        <i class="bi bi-info-circle me-1"></i>La categoría no se puede cambiar una vez publicado.
+                    </div>
                     <div class="invalid-feedback">Por favor selecciona una categoría.</div>
                 </div>
+
 
                 <!-- Título -->
                 <div class="mb-3">
@@ -112,7 +124,7 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="vBrand" class="form-label fw-semibold">Marca</label>
-                        <input type="text" id="vBrand" name="brand" class="form-control"
+                        <input type="text" id="vBrand" name="vehicleBrand" class="form-control"
                                placeholder="Ej: Toyota" th:value="${product?.brand}">
                     </div>
                     <div class="col-md-6">
@@ -173,7 +185,7 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label for="cBrand" class="form-label fw-semibold">Marca</label>
-                        <input type="text" id="cBrand" name="brand" class="form-control"
+                        <input type="text" id="cBrand" name="clothingBrand" class="form-control"
                                placeholder="Ej: Zara" th:value="${product?.brand}">
                     </div>
                     <div class="col-md-6">
@@ -214,7 +226,7 @@
                             <option th:each="cond : ${homeConditions}"
                                     th:value="${cond}"
                                     th:text="${cond.displayName}"
-                                    th:selected="${product?.homeCondition == cond}">
+                                    th:selected="${product?.condition == cond}">
                             </option>
                         </select>
                     </div>
@@ -245,7 +257,7 @@
 
 <script th:inline="javascript">
     // Valor inicial de la categoría (en edición)
-    var initialCategory = /*[[${product?.category?.name()}]]*/ null;
+    var initialCategory = /*[[${product?.categoryEnum?.name()}]]*/ null;
 
     function toggleCategoryFields(value) {
         document.getElementById('section-vehicle').style.display = 'none';

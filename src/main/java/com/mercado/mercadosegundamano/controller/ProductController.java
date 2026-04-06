@@ -92,7 +92,7 @@ public class ProductController {
             @RequestParam String description,
             @RequestParam BigDecimal price,
             // Campos especificos de vehiculos (opcionales segun categoria)
-            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String vehicleBrand,
             @RequestParam(required = false) String vehicleModel,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer mileage,
@@ -100,6 +100,7 @@ public class ProductController {
             @RequestParam(required = false) GearboxType gearboxType,
             @RequestParam(required = false) Integer doors,
             // Campos especificos de ropa
+            @RequestParam(required = false) String clothingBrand,
             @RequestParam(required = false) String size,
             @RequestParam(required = false) String color,
             @RequestParam(required = false) String gender,
@@ -121,7 +122,7 @@ public class ProductController {
             switch (category) {
                 case "VEHICLE" -> {
                     VehicleProduct v = new VehicleProduct();
-                    v.setBrand(brand);
+                    v.setBrand(vehicleBrand);
                     v.setModel(vehicleModel);
                     v.setYear(year);
                     v.setMileage(mileage);
@@ -132,7 +133,7 @@ public class ProductController {
                 }
                 case "CLOTHING" -> {
                     ClothingProduct c = new ClothingProduct();
-                    c.setBrand(brand);
+                    c.setBrand(clothingBrand);
                     c.setSize(size);
                     c.setColor(color);
                     c.setGender(gender);
@@ -183,6 +184,7 @@ public class ProductController {
 
         // Pasamos el producto y los enums al modelo
         model.addAttribute("product", product);
+        model.addAttribute("categories", ProductCategory.values());
         model.addAttribute("fuelTypes", FuelType.values());
         model.addAttribute("gearboxTypes", GearboxType.values());
         model.addAttribute("homeConditions", HomeCondition.values());
@@ -191,13 +193,31 @@ public class ProductController {
     }
 
     // ── POST /my/products/{id}/edit ───────────────────────────────
-    // Procesa el formulario de edicion.
+    // Procesa el formulario de edicion con todos los campos específicos.
     @PostMapping("/{id}/edit")
     public String updateProduct(
             @PathVariable Long id,
+            // Campos comunes
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam BigDecimal price,
+            // Campos específicos de vehículos
+            @RequestParam(required = false) String vehicleBrand,
+            @RequestParam(required = false) String vehicleModel,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer mileage,
+            @RequestParam(required = false) FuelType fuelType,
+            @RequestParam(required = false) GearboxType gearboxType,
+            @RequestParam(required = false) Integer doors,
+            // Campos específicos de ropa
+            @RequestParam(required = false) String clothingBrand,
+            @RequestParam(required = false) String size,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) String gender,
+            // Campos específicos de hogar
+            @RequestParam(required = false) HomeCondition condition,
+            @RequestParam(required = false) String dimensions,
+            // Imágenes
             @RequestParam(required = false) List<MultipartFile> images,
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes) {
@@ -205,14 +225,35 @@ public class ProductController {
         try {
             User currentUser = getCurrentUser(userDetails);
 
-            // Creamos un producto temporal solo con los campos editables
-            // El servicio se encarga de actualizar solo lo necesario
-            Product updatedData = new VehicleProduct();
-            updatedData.setTitle(title);
-            updatedData.setDescription(description);
-            updatedData.setPrice(price);
+            // Obtenemos el producto real de la BD para actualizar sus campos específicos
+            Product product = productRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-            productService.updateProduct(id, updatedData, images, currentUser);
+            // Actualizamos campos comunes
+            product.setTitle(title);
+            product.setDescription(description);
+            product.setPrice(price);
+
+            // Actualizamos campos específicos según el tipo real del producto
+            if (product instanceof VehicleProduct v) {
+                if (vehicleBrand != null && !vehicleBrand.isBlank()) v.setBrand(vehicleBrand);
+                if (vehicleModel != null && !vehicleModel.isBlank()) v.setModel(vehicleModel);
+                if (year != null) v.setYear(year);
+                if (mileage != null) v.setMileage(mileage);
+                if (fuelType != null) v.setFuelType(fuelType);
+                if (gearboxType != null) v.setGearboxType(gearboxType);
+                if (doors != null) v.setDoors(doors);
+            } else if (product instanceof ClothingProduct c) {
+                if (clothingBrand != null && !clothingBrand.isBlank()) c.setBrand(clothingBrand);
+                if (size != null && !size.isBlank()) c.setSize(size);
+                if (color != null && !color.isBlank()) c.setColor(color);
+                if (gender != null && !gender.isBlank()) c.setGender(gender);
+            } else if (product instanceof HomeProduct h) {
+                if (condition != null) h.setCondition(condition);
+                if (dimensions != null && !dimensions.isBlank()) h.setDimensions(dimensions);
+            }
+
+            productService.updateProduct(id, product, images, currentUser);
 
             redirectAttributes.addFlashAttribute("success", "Producto actualizado correctamente");
 

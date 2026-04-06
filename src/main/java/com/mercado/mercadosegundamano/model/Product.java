@@ -1,6 +1,10 @@
 package com.mercado.mercadosegundamano.model;
 
+import com.mercado.mercadosegundamano.enums.FuelType;
+import com.mercado.mercadosegundamano.enums.GearboxType;
+import com.mercado.mercadosegundamano.enums.HomeCondition;
 import com.mercado.mercadosegundamano.enums.ProductCategory;
+import com.mercado.mercadosegundamano.enums.ProductStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +13,6 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.mercado.mercadosegundamano.enums.ProductStatus;
 
 
 @Entity
@@ -114,4 +117,30 @@ public abstract class Product {
     public void setImagePaths(List<String> imagePaths) { this.imagePaths = imagePaths; }
     public void setSeller(User seller) { this.seller = seller; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // ── Getters virtuales para campos de subclases ──────────────────────────
+    // @Transient evita que JPA intente mapear estas columnas en la tabla base.
+    // Las subclases sobreescriben los relevantes con sus propias columnas JPA.
+    // Esto permite que Thymeleaf acceda a product.brand (etc.) sin importar
+    // qué tipo concreto de producto se está renderizando.
+
+    // Campos comunes a vehículo y ropa
+    @Transient public String getBrand()       { return null; }
+
+    // Campos de vehículo
+    @Transient public String        getModel()       { return null; }
+    @Transient public Integer       getYear()        { return null; }
+    @Transient public Integer       getMileage()     { return null; }
+    @Transient public FuelType      getFuelType()    { return null; }
+    @Transient public GearboxType   getGearboxType() { return null; }
+    @Transient public Integer       getDoors()       { return null; }
+
+    // Campos de ropa
+    @Transient public String getSize()   { return null; }
+    @Transient public String getColor()  { return null; }
+    @Transient public String getGender() { return null; }
+
+    // Campos de hogar
+    @Transient public HomeCondition getCondition()  { return null; }
+    @Transient public String        getDimensions() { return null; }
 }
