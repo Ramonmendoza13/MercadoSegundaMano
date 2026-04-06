@@ -20,13 +20,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CartService cartService;
     private final ProductRepository productRepository;
+    private final EmailService emailService;
 
     public OrderService(OrderRepository orderRepository,
                         CartService cartService,
-                        ProductRepository productRepository) {
+                        ProductRepository productRepository,
+                        EmailService emailService) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
         this.productRepository = productRepository;
+        this.emailService = emailService;
     }
 
     // Procesa la compra completa.
@@ -71,6 +74,13 @@ public class OrderService {
 
         // Vaciamos el carrito
         cartService.clearCart(cart);
+
+        // ── Enviamos los emails de notificacion ────────────────────────────────
+        // El email al comprador se envia fuera de la transaccion logica para que
+        // un fallo en el email no deshaga la compra ya completada.
+        // Usamos un bloque try-catch independiente en cada metodo del EmailService.
+        emailService.sendPurchaseConfirmationEmail(order);
+        emailService.sendSaleNotificationEmails(order);
 
         return order;
     }
