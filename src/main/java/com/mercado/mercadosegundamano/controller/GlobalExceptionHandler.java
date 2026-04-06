@@ -1,7 +1,6 @@
 package com.mercado.mercadosegundamano.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.tomcat.util.http.InvalidParameterException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +14,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             MultipartException.class,
             MaxUploadSizeExceededException.class,
-            InvalidParameterException.class,
             IllegalArgumentException.class
     })
     public String handleUploadExceptions(HttpServletRequest request,

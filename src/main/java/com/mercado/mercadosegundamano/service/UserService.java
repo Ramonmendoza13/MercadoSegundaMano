@@ -9,19 +9,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private final EmailService emailService;
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       ImageService imageService) {
+                       ImageService imageService,
+                       EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.imageService = imageService;
+        this.emailService = emailService;
     }
 
     // Registra un nuevo usuario.
@@ -55,6 +59,15 @@ public class UserService {
         );
 
         userRepository.save(user);
+
+        // Enviamos el email de bienvenida
+        // try-catch para que si falla el email no impida el registro
+        try {
+            emailService.sendWelcomeEmail(dto.getEmail(), dto.getUsername());
+        } catch (Exception e) {
+            // El registro fue exitoso aunque el email no se enviara
+            System.out.println("Error al enviar email de bienvenida: " + e.getMessage());
+        }
 
         // null = sin errores = registro exitoso
         return null;
