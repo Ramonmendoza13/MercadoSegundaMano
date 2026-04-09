@@ -2,7 +2,8 @@ package com.mercado.mercadosegundamano.enums;
 
 public enum ProductStatus {
     AVAILABLE("Disponible"),
-    SOLD("Vendido");
+    SOLD("Vendido"),
+    SHIPPED("Enviado");
 
     // Los enums pueden tener atributos y métodos como cualquier clase
     // Aquí guardamos una etiqueta en español para mostrar en la web

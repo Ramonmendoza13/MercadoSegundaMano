@@ -122,7 +122,7 @@ public class ProductService {
 
     // Devuelve los productos de un vendedor concreto
     public List<Product> getProductsBySeller(User seller) {
-        return productRepository.findBySeller(seller);
+        return productRepository.findBySellerOrderByCreatedAtDesc(seller);
     }
 
     // Busca productos por texto en el titulo

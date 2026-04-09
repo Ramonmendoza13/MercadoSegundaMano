@@ -2,7 +2,9 @@ package com.mercado.mercadosegundamano.controller;
 
 import com.mercado.mercadosegundamano.enums.*;
 import com.mercado.mercadosegundamano.model.*;
+import com.mercado.mercadosegundamano.repository.OrderRepository;
 import com.mercado.mercadosegundamano.repository.ProductRepository;
+import com.mercado.mercadosegundamano.service.EmailService;
 import com.mercado.mercadosegundamano.service.OrderService;
 import com.mercado.mercadosegundamano.service.ProductService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +18,9 @@ import com.mercado.mercadosegundamano.repository.UserRepository;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // @RequestMapping agrupa todas las rutas bajo /my/products
 @Controller
@@ -27,15 +31,21 @@ public class ProductController {
     private final OrderService orderService;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final EmailService emailService;
 
     public ProductController(ProductService productService,
                              OrderService orderService,
                              ProductRepository productRepository,
-                             UserRepository userRepository) {
+                             UserRepository userRepository,
+                             OrderRepository orderRepository,
+                             EmailService emailService) {
         this.productService = productService;
         this.orderService = orderService;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.orderRepository = orderRepository;
+        this.emailService = emailService;
     }
 
     // Metodo auxiliar privado para obtener la entidad User a partir
@@ -59,6 +69,17 @@ public class ProductController {
         // Obtenemos solo los productos de este vendedor
         List<Product> products = productService.getProductsBySeller(currentUser);
         model.addAttribute("products", products);
+
+        // Para cada producto vendido/enviado, buscamos su Order para obtener la direccion de envio
+        // Construimos un mapa productId -> Order que Thymeleaf usara en la vista
+        Map<Long, Order> productOrders = new HashMap<>();
+        for (Product p : products) {
+            if (p.getStatus() == ProductStatus.SOLD || p.getStatus() == ProductStatus.SHIPPED) {
+                orderRepository.findFirstByProductsContaining(p)
+                        .ifPresent(order -> productOrders.put(p.getId(), order));
+            }
+        }
+        model.addAttribute("productOrders", productOrders);
 
         return "products/my-products";
     }
@@ -281,6 +302,43 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar el producto");
         }
 
+        return "redirect:/my/products";
+    }
+
+    // ── POST /my/products/{id}/ship ───────────────────────────────
+    // El vendedor confirma que ha enviado un producto ya vendido.
+    // Cambia el estado a SHIPPED y notifica al comprador por email.
+    @PostMapping("/{id}/ship")
+    public String confirmShipping(@PathVariable Long id,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  RedirectAttributes redirectAttributes) {
+
+        User currentUser = getCurrentUser(userDetails);
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        // Seguridad: solo el dueno puede confirmar el envio
+        if (!product.getSeller().getId().equals(currentUser.getId())) {
+            redirectAttributes.addFlashAttribute("error", "No tienes permiso para realizar esta accion");
+            return "redirect:/my/products";
+        }
+
+        // Solo se puede confirmar envio de productos vendidos
+        if (product.getStatus() != ProductStatus.SOLD) {
+            redirectAttributes.addFlashAttribute("error", "Solo puedes confirmar el envio de productos vendidos");
+            return "redirect:/my/products";
+        }
+
+        // Cambiamos el estado a SHIPPED
+        product.setStatus(ProductStatus.SHIPPED);
+        productRepository.save(product);
+
+        // Buscamos el Order para obtener la direccion y notificar al comprador
+        orderRepository.findFirstByProductsContaining(product)
+                .ifPresent(order -> emailService.sendShippingNotificationEmail(order, product));
+
+        redirectAttributes.addFlashAttribute("success", "Envio confirmado. El comprador ha sido notificado por email.");
         return "redirect:/my/products";
     }
 

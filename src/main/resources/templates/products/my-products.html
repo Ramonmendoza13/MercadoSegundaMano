@@ -31,6 +31,7 @@
                             <th>Precio</th>
                             <th>Estado</th>
                             <th>Fecha</th>
+                            <th>Dir. envío</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -61,14 +62,25 @@
                             <!-- Estado -->
                             <td>
                                 <span class="badge"
-                                      th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
+                                      th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : (${product.status.name() == 'SHIPPED'} ? ' bg-success' : ' badge-sold')"
                                       th:text="${product.status.displayName}">Estado</span>
                             </td>
                             <!-- Fecha -->
                             <td class="text-muted small"
                                 th:text="${#temporals.format(product.createdAt, 'dd/MM/yyyy')}">—</td>
+                            <!-- Dirección de envío (solo para SOLD y SHIPPED) -->
+                            <td>
+                                <span th:if="${product.status.name() == 'AVAILABLE'}" class="text-muted small">—</span>
+                                <span th:if="${product.status.name() != 'AVAILABLE' and productOrders[product.id] != null}"
+                                      class="small"
+                                      style="max-width:200px; display:inline-block; word-break:break-word;"
+                                      th:text="${productOrders[product.id].shippingAddress}">—</span>
+                                <span th:if="${product.status.name() != 'AVAILABLE' and productOrders[product.id] == null}"
+                                      class="text-muted small">Sin datos</span>
+                            </td>
                             <!-- Acciones -->
                             <td class="text-center">
+                                <!-- Disponible: editar y borrar -->
                                 <div class="d-flex justify-content-center gap-2"
                                      th:if="${product.status.name() == 'AVAILABLE'}">
                                     <a th:href="@{/my/products/{id}/edit(id=${product.id})}"
@@ -83,6 +95,20 @@
                                         </button>
                                     </form>
                                 </div>
+                                <!-- Vendido: confirmar envío -->
+                                <div th:if="${product.status.name() == 'SOLD'}">
+                                    <form method="POST" th:action="@{/my/products/{id}/ship(id=${product.id})}"
+                                          onsubmit="return confirm('¿Confirmas que has enviado «' + this.dataset.title + '»?')"
+                                          th:data-title="${product.title}">
+                                        <button type="submit" class="btn btn-sm btn-success" title="Confirmar envío">
+                                            <i class="bi bi-truck me-1"></i>Confirmar envío
+                                        </button>
+                                    </form>
+                                </div>
+                                <!-- Enviado: sin acciones -->
+                                <span th:if="${product.status.name() == 'SHIPPED'}" class="text-muted small">
+                                    <i class="bi bi-check-circle-fill text-success me-1"></i>Enviado
+                                </span>
                             </td>
                         </tr>
                     </tbody>

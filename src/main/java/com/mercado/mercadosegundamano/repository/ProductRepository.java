@@ -15,8 +15,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>{
     // Busca productos por su estado (AVAILABLE, SOLD)
     List<Product> findByStatus(ProductStatus status);
 
-    // Busca todos los productos de un vendedor
-    List<Product> findBySeller(User seller);
+    // Busca todos los productos de un vendedor, ordenados por fecha de creación descendente
+    List<Product> findBySellerOrderByCreatedAtDesc(User seller);
 
     // Busca los productos de un vendedor filtrados por estado
     List<Product> findBySellerAndStatus(User seller, ProductStatus status);

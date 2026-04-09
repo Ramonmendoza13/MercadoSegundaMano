@@ -357,4 +357,99 @@ public class EmailService {
             System.err.println("[EmailService] Error al enviar email al vendedor " + seller.getEmail() + ": " + e.getMessage());
         }
     }
+    // ── Email al COMPRADOR: producto enviado ──────────────────────────────────
+    // Notifica al comprador que el vendedor ha confirmado el envío de su producto.
+    public void sendShippingNotificationEmail(Order order, Product product) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            User buyer = order.getBuyer();
+            helper.setTo(buyer.getEmail());
+            helper.setSubject("🚚 Tu producto está en camino - Mercado Segunda Mano");
+
+            String html = """
+                    <!DOCTYPE html>
+                    <html lang="es">
+                    <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+                    <body style="margin:0; padding:0; background-color:#f5f5f5; font-family: 'Segoe UI', Arial, sans-serif;">
+
+                      <table width="100%%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5; padding: 40px 0;">
+                        <tr>
+                          <td align="center">
+                            <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%%;">
+
+                              <!-- CABECERA -->
+                              <tr>
+                                <td style="background: linear-gradient(135deg, #1a1a2e 0%%, #16213e 50%%, #0f3460 100%%); border-radius: 16px 16px 0 0; padding: 40px; text-align: center;">
+                                  <div style="font-size: 48px; margin-bottom: 8px;">🚚</div>
+                                  <h1 style="color: #ffffff; font-size: 22px; margin: 0 0 8px 0; font-weight: 700;">¡Tu pedido está en camino!</h1>
+                                  <p style="color: #a0b4cc; font-size: 14px; margin: 0;">Pedido #%d</p>
+                                </td>
+                              </tr>
+
+                              <!-- SALUDO -->
+                              <tr>
+                                <td style="background: #ffffff; padding: 32px 40px 16px 40px;">
+                                  <p style="font-size: 16px; color: #444; margin: 0;">
+                                    Hola <strong>%s</strong>,<br><br>
+                                    ¡Buenas noticias! El vendedor ha confirmado el envío de tu producto.
+                                    Pronto lo recibirás en tu dirección.
+                                  </p>
+                                </td>
+                              </tr>
+
+                              <!-- PRODUCTO -->
+                              <tr>
+                                <td style="background: #ffffff; padding: 16px 40px;">
+                                  <h2 style="font-size: 16px; color: #1a1a2e; margin: 0 0 12px 0; font-weight: 700; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px;">📦 Producto enviado</h2>
+                                  <div style="background: #f8f9fa; border-left: 4px solid #0f3460; border-radius: 8px; padding: 16px; font-size: 15px; color: #2d2d2d; font-weight: 600;">
+                                    %s
+                                    <span style="float:right; color:#0f3460;">%.2f €</span>
+                                  </div>
+                                </td>
+                              </tr>
+
+                              <!-- DIRECCION -->
+                              <tr>
+                                <td style="background: #ffffff; padding: 16px 40px 32px 40px;">
+                                  <h2 style="font-size: 16px; color: #1a1a2e; margin: 0 0 12px 0; font-weight: 700; border-bottom: 2px solid #e8e8e8; padding-bottom: 8px;">📍 Dirección de entrega</h2>
+                                  <div style="background: #f8f9fa; border-left: 4px solid #0f3460; border-radius: 8px; padding: 16px; font-size: 14px; color: #444; line-height: 1.6;">
+                                    %s
+                                  </div>
+                                </td>
+                              </tr>
+
+                              <!-- PIE -->
+                              <tr>
+                                <td style="background: #1a1a2e; border-radius: 0 0 16px 16px; padding: 24px 40px; text-align: center;">
+                                  <p style="color: #a0b4cc; font-size: 12px; margin: 0 0 8px 0;">Mercado Segunda Mano · Compra y vende con confianza</p>
+                                  <p style="color: #6b7c93; font-size: 11px; margin: 0;">
+                                    Si tienes algún problema con tu pedido, contacta con nosotros a través de la plataforma.
+                                  </p>
+                                </td>
+                              </tr>
+
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                    </body>
+                    </html>
+                    """.formatted(
+                    order.getId(),
+                    buyer.getUsername(),
+                    product.getTitle(),
+                    product.getPrice(),
+                    order.getShippingAddress()
+            );
+
+            helper.setText(html, true);
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            System.err.println("[EmailService] Error al enviar email de envío al comprador: " + e.getMessage());
+        }
+    }
 }
