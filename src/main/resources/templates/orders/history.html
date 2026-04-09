@@ -11,45 +11,47 @@
 <div th:replace="~{layout/base :: navbar}"></div>
 <div th:replace="~{layout/base :: flashMessages}"></div>
 
-<main class="container my-4">
-    <h1 class="section-title">Mis pedidos</h1>
+<main class="container my-5" style="max-width: 900px;">
+    <h1 class="section-title mb-5" style="font-size: 2.2rem; border:none; padding:0; letter-spacing: -1px; text-align: center;">Registro de adquisiciones</h1>
 
     <!-- Lista de pedidos -->
     <div th:if="${not #lists.isEmpty(orders)}">
-        <div class="card border-0 shadow-sm rounded-3 mb-3" th:each="order : ${orders}">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <div class="card border-0 mb-4 rounded-4 overflow-hidden" th:each="order : ${orders}" style="border: 1px solid var(--border-color) !important; box-shadow: none;">
+            <div class="card-header d-flex justify-content-between align-items-center py-4 px-4" style="background-color: var(--brand-light); border-bottom: 1px dashed var(--border-color);">
                 <div>
-                    <span class="badge bg-success me-2">Completado</span>
-                    <span class="text-muted small"
-                          th:text="'Pedido del ' + ${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                    <span class="badge rounded-pill me-3 px-3 py-2" style="background-color: #27ae60;">Completado</span>
+                    <span class="text-muted" style="font-weight: 500; font-size: 0.95rem;"
+                          th:text="'Adquirido el ' + ${#temporals.format(order.createdAt, 'dd/MM/yyyy')}">Fecha</span>
                 </div>
-                <strong class="text-primary fs-5"
+                <strong class="fs-4" style="color: var(--brand-dark); font-family: 'Outfit'; font-weight: 700; letter-spacing: -0.5px;"
                         th:text="${#numbers.formatDecimal(order.totalPrice, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</strong>
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <!-- Dirección de envío -->
-                <p class="text-muted small mb-3">
-                    <i class="bi bi-geo-alt me-1"></i>
-                    <strong>Dirección de envío:</strong>
-                    <span th:text="${order.shippingAddress}">—</span>
-                </p>
+                <div class="mb-4 p-3 rounded" style="background-color: #fcfcfc; border: 1px solid var(--border-color);">
+                    <p class="text-muted small mb-0" style="font-weight: 500;">
+                        <i class="bi bi-geo-alt-fill me-2" style="color: var(--brand-main); opacity: 0.7;"></i>
+                        <span style="letter-spacing: 0.5px; text-transform: uppercase; font-size: 0.75rem; margin-right: 8px;">Dirección provista:</span>
+                        <span class="text-dark" th:text="${order.shippingAddress}">—</span>
+                    </p>
+                </div>
                 <!-- Productos del pedido -->
-                <div class="row g-3">
-                    <div class="col-sm-6 col-md-4" th:each="product : ${order.products}">
-                        <div class="d-flex align-items-center gap-3 p-2 rounded bg-light">
+                <div class="row g-4">
+                    <div class="col-md-6" th:each="product : ${order.products}">
+                        <div class="d-flex align-items-center gap-3 p-3 rounded-3 h-100" style="border: 1px solid var(--border-color); background-color: #fff;">
                             <img th:if="${not #lists.isEmpty(product.imagePaths)}"
                                  th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
                                  class="rounded"
-                                 style="width:50px; height:50px; object-fit:cover;"
+                                 style="width:60px; height:60px; object-fit:cover; border: 1px solid rgba(0,0,0,0.1);"
                                  th:alt="${product.title}">
                             <div th:if="${#lists.isEmpty(product.imagePaths)}"
-                                 class="rounded bg-secondary d-flex align-items-center justify-content-center"
-                                 style="width:50px; height:50px; flex-shrink:0;">
-                                <i class="bi bi-image text-white small"></i>
+                                 class="rounded d-flex align-items-center justify-content-center"
+                                 style="width:60px; height:60px; background-color: var(--brand-light); flex-shrink:0;">
+                                <i class="bi bi-camera text-muted small" style="opacity:0.5;"></i>
                             </div>
-                            <div class="min-w-0">
-                                <div class="small fw-semibold text-truncate" th:text="${product.title}">Producto</div>
-                                <div class="small text-primary fw-bold"
+                            <div class="min-w-0 d-flex flex-column justify-content-center">
+                                <a th:href="@{/products/{id}(id=${product.id})}" class="text-decoration-none d-block text-truncate mb-1" style="font-family: 'Outfit'; font-weight: 600; color: var(--brand-dark); font-size: 1.05rem;" th:text="${product.title}">Producto</a>
+                                <div class="text-muted fw-semibold"
                                      th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
                             </div>
                         </div>
@@ -60,12 +62,12 @@
     </div>
 
     <!-- Sin pedidos -->
-    <div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
-        <i class="bi bi-clock-history display-1 text-muted"></i>
-        <h4 class="mt-3 text-muted">Aún no has realizado ningún pedido</h4>
-        <p class="text-muted">Explora el catálogo y encuentra algo que te guste.</p>
-        <a th:href="@{/products}" class="btn btn-primary mt-2">
-            <i class="bi bi-grid me-1"></i>Ver catálogo
+    <div th:if="${#lists.isEmpty(orders)}" class="text-center py-5 my-5" style="border: 1px dashed var(--border-color); border-radius: 12px; background-color: #fff;">
+        <i class="bi bi-calendar2-minus display-1 text-muted" style="opacity: 0.2;"></i>
+        <h4 class="mt-4" style="font-family: 'Outfit'; color: var(--brand-dark);">El historial está vacío</h4>
+        <p class="text-muted mb-4">Parece que aún no te has decidido por ningún artículo del escaparate.</p>
+        <a th:href="@{/products}" class="btn btn-primary px-4 py-2 shadow-none">
+            Visitar el catálogo
         </a>
     </div>
 </main>

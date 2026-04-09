@@ -7,21 +7,38 @@
     <th:block th:replace="~{layout/base :: pageHead}"></th:block>
     <style>
         .hero-section {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            padding: 5rem 0;
-        }
-        .category-card {
-            border: none;
-            border-radius: 12px;
-            color: white;
-            transition: transform 0.25s, box-shadow 0.25s;
+            background-color: var(--brand-light);
+            border-bottom: 1px solid var(--border-color);
+            padding: 7rem 0 6rem 0;
+            position: relative;
             overflow: hidden;
-            cursor: pointer;
         }
-        .category-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
-        .category-vehicle { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .category-clothing { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .category-home { background: linear-gradient(135deg, #4facfe, #00c9ff); }
+        .hero-section .display-4 {
+            font-size: 4rem;
+            letter-spacing: -1.5px;
+            color: var(--brand-main);
+            line-height: 1.1;
+        }
+        @media (max-width: 768px) {
+            .hero-section .display-4 { font-size: 2.8rem; }
+        }
+        /* Categorías editoriales */
+        .category-card {
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            border-radius: 12px;
+            color: var(--brand-dark);
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+        .category-card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--brand-main);
+            background-color: var(--brand-main);
+            color: #fff;
+        }
+        .category-card i { color: var(--accent); transition: color 0.3s; }
+        .category-card:hover i { color: #fff; }
     </style>
 </head>
 <body>
@@ -30,33 +47,31 @@
 <div th:replace="~{layout/base :: flashMessages}"></div>
 
 <main>
-    <!-- HERO -->
-    <section class="hero-section">
-        <div class="container text-center text-white">
-            <h1 class="display-4 fw-bold mb-3">
-                <i class="bi bi-shop me-2"></i>Mercado de Segunda Mano
-            </h1>
-            <p class="lead mb-4" style="opacity:0.85;">
-                Compra y vende con miles de personas.<br>
-                Vehículos, ropa, hogar y mucho más.
+    <!-- HERO EDITORIAL -->
+    <section class="hero-section text-center">
+        <div class="container" style="max-width: 800px; position:relative; z-index:2;">
+            <h1 class="display-4 fw-bold mb-4">Lo bueno tiene<br>una <span style="color: var(--accent);">segunda vida.</span></h1>
+            <p class="lead mb-5" style="color: var(--text-muted); font-size: 1.25rem;">
+                Compra, vende y contribuye a un consumo más sostenible. Vehículos, ropa, hogar y objetos con historia que buscan un nuevo lugar.
             </p>
-            <div class="d-flex justify-content-center gap-3 flex-wrap mb-4">
-                <a th:href="@{/products}" class="btn btn-light btn-lg fw-semibold shadow-sm">
-                    <i class="bi bi-grid me-1"></i>Ver catálogo
+            <div class="d-flex justify-content-center gap-3 flex-wrap mb-5">
+                <a th:href="@{/products}" class="btn btn-primary btn-lg fs-5 px-4 shadow-sm">
+                    Explorar catálogo
                 </a>
-                <a th:href="@{/my/products/new}" class="btn btn-outline-light btn-lg" sec:authorize="isAuthenticated()">
-                    <i class="bi bi-plus-circle me-1"></i>Publicar anuncio
+                <a th:href="@{/my/products/new}" class="btn btn-outline-primary btn-lg fs-5 px-4 bg-white" sec:authorize="isAuthenticated()">
+                    Publicar anuncio
                 </a>
-                <a th:href="@{/register}" class="btn btn-outline-light btn-lg" sec:authorize="isAnonymous()">
-                    <i class="bi bi-person-plus me-1"></i>Únete gratis
+                <a th:href="@{/register}" class="btn btn-outline-primary btn-lg fs-5 px-4 bg-white" sec:authorize="isAnonymous()">
+                    Únete gratis
                 </a>
             </div>
-            <!-- Buscador hero -->
-            <form class="mx-auto" style="max-width: 520px;" method="GET" th:action="@{/products}">
-                <div class="input-group input-group-lg shadow-sm">
-                    <input type="search" name="query" class="form-control" placeholder="¿Qué estás buscando?">
-                    <button class="btn btn-primary fw-semibold" type="submit">
-                        <i class="bi bi-search me-1"></i>Buscar
+            
+            <!-- Buscador elegante -->
+            <form class="mx-auto" style="max-width: 600px;" method="GET" th:action="@{/products}">
+                <div class="d-flex" style="background: #fff; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+                    <input type="search" name="query" class="form-control border-0 px-4 py-3" style="box-shadow: none; font-size: 1.1rem;" placeholder="¿Qué pieza única buscas hoy?">
+                    <button class="btn btn-dark-custom px-4 rounded-0 fw-bold border-0" type="submit" style="font-size: 1.1rem;">
+                        <i class="bi bi-search me-2"></i>Buscar
                     </button>
                 </div>
             </form>
@@ -64,33 +79,33 @@
     </section>
 
     <!-- CATEGORÍAS -->
-    <section class="container my-5">
-        <h2 class="section-title">Explorar por categorías</h2>
-        <div class="row g-3">
+    <section class="container" style="margin-top: 6rem; margin-bottom: 6rem;">
+        <h2 class="section-title text-center mb-5">Explora por categorías</h2>
+        <div class="row g-4">
             <div class="col-md-4">
-                <a th:href="@{/products(category='VEHICLE')}" class="text-decoration-none d-block">
-                    <div class="category-card category-vehicle p-4 text-center">
-                        <i class="bi bi-car-front" style="font-size: 2.5rem;"></i>
-                        <h5 class="fw-bold mt-2 mb-1">Vehículos</h5>
-                        <p class="small mb-0" style="opacity:0.8;">Coches, motos y más</p>
+                <a th:href="@{/products(category='VEHICLE')}" class="text-decoration-none d-block h-100">
+                    <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
+                        <i class="bi bi-car-front mb-3" style="font-size: 3rem;"></i>
+                        <h4 class="fw-bold mb-2">Vehículos</h4>
+                        <p class="mb-0" style="opacity:0.8;">Coches, motos y más</p>
                     </div>
                 </a>
             </div>
             <div class="col-md-4">
-                <a th:href="@{/products(category='CLOTHING')}" class="text-decoration-none d-block">
-                    <div class="category-card category-clothing p-4 text-center">
-                        <i class="bi bi-bag" style="font-size: 2.5rem;"></i>
-                        <h5 class="fw-bold mt-2 mb-1">Ropa</h5>
-                        <p class="small mb-0" style="opacity:0.8;">Moda de segunda mano</p>
+                <a th:href="@{/products(category='CLOTHING')}" class="text-decoration-none d-block h-100">
+                    <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
+                        <i class="bi bi-bag mb-3" style="font-size: 3rem;"></i>
+                        <h4 class="fw-bold mb-2">Ropa</h4>
+                        <p class="mb-0" style="opacity:0.8;">Moda de segunda mano</p>
                     </div>
                 </a>
             </div>
             <div class="col-md-4">
-                <a th:href="@{/products(category='HOME')}" class="text-decoration-none d-block">
-                    <div class="category-card category-home p-4 text-center">
-                        <i class="bi bi-house" style="font-size: 2.5rem;"></i>
-                        <h5 class="fw-bold mt-2 mb-1">Hogar</h5>
-                        <p class="small mb-0" style="opacity:0.8;">Muebles y decoración</p>
+                <a th:href="@{/products(category='HOME')}" class="text-decoration-none d-block h-100">
+                    <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
+                        <i class="bi bi-house mb-3" style="font-size: 3rem;"></i>
+                        <h4 class="fw-bold mb-2">Hogar</h4>
+                        <p class="mb-0" style="opacity:0.8;">Muebles y decoración</p>
                     </div>
                 </a>
             </div>
@@ -98,10 +113,10 @@
     </section>
 
     <!-- ÚLTIMOS ANUNCIOS -->
-    <section class="container my-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="section-title mb-0">Últimos anuncios</h2>
-            <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">
+    <section class="container" style="margin-bottom: 6rem;">
+        <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3" style="border-color: var(--border-color) !important;">
+            <h2 class="section-title mb-0" style="border:none; padding:0;">Recién llegados</h2>
+            <a th:href="@{/products}" class="btn btn-outline-light text-dark btn-sm">
                 Ver todos <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
@@ -110,26 +125,27 @@
             <div class="col-sm-6 col-md-4 col-lg-3" th:each="product : ${productos}">
                 <div class="card product-card h-100">
                     <!-- Imagen -->
-                    <div style="position: relative; height: 200px; background: #eee;">
+                    <div style="position: relative; height: 240px; background: #fdfdfc;">
                         <img th:if="${not #lists.isEmpty(product.imagePaths)}"
                              th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
                              th:alt="${product.title}"
-                             style="width:100%; height:200px; object-fit:cover;">
+                             style="width:100%; height:240px; object-fit:cover;">
                         <div th:if="${#lists.isEmpty(product.imagePaths)}"
-                             class="d-flex align-items-center justify-content-center bg-light w-100 h-100">
-                            <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                             class="d-flex align-items-center justify-content-center w-100 h-100" style="border-bottom: 1px solid var(--border-color);">
+                            <i class="bi bi-camera text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
                         </div>
-                        <span class="badge position-absolute top-0 end-0 m-2 fs-6"
+                        <span class="badge position-absolute top-0 end-0 m-3 px-3 py-2 fs-6 rounded-pill"
                               th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
                               th:text="${product.status.displayName}">Estado</span>
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        <h6 class="card-title mb-1 text-truncate" th:text="${product.title}">Título</h6>
-                        <div class="price mb-3"
-                             th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0 text-truncate" style="font-family: 'Outfit'; font-weight: 600;" th:text="${product.title}">Título</h5>
+                        </div>
+                        <div class="price mb-4" th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
                         <a th:href="@{/products/{id}(id=${product.id})}"
-                           class="btn btn-primary btn-sm mt-auto stretched-link">
-                            Ver anuncio <i class="bi bi-arrow-right ms-1"></i>
+                           class="btn btn-outline-primary mt-auto stretched-link text-center">
+                            Ver detalles
                         </a>
                     </div>
                 </div>
@@ -137,15 +153,15 @@
         </div>
 
         <!-- Estado vacío -->
-        <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
-            <i class="bi bi-inbox display-1 text-muted"></i>
-            <h4 class="mt-3 text-muted">Aún no hay productos publicados</h4>
-            <p class="text-muted">¡Sé el primero en publicar un anuncio!</p>
-            <a th:href="@{/my/products/new}" class="btn btn-primary mt-2" sec:authorize="isAuthenticated()">
-                <i class="bi bi-plus-circle me-1"></i>Publicar anuncio
+        <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5" style="border: 1px dashed var(--border-color); border-radius: 12px; background-color: #fff;">
+            <i class="bi bi-archive display-1 text-muted" style="opacity: 0.2;"></i>
+            <h4 class="mt-3" style="color: var(--brand-dark);">Aún no hay descubrimientos</h4>
+            <p class="text-muted mb-4">El catálogo está esperando su primera pieza única.</p>
+            <a th:href="@{/my/products/new}" class="btn btn-primary" sec:authorize="isAuthenticated()">
+                <i class="bi bi-plus-lg me-2"></i>Añadir producto
             </a>
-            <a th:href="@{/register}" class="btn btn-primary mt-2" sec:authorize="isAnonymous()">
-                <i class="bi bi-person-plus me-1"></i>Registrarse gratis
+            <a th:href="@{/register}" class="btn btn-primary" sec:authorize="isAnonymous()">
+                Crear cuenta
             </a>
         </div>
     </section>

@@ -6,13 +6,36 @@
     <title th:text="${product.title} + ' | Mercado Segunda Mano'">Detalle | Mercado Segunda Mano</title>
     <th:block th:replace="~{layout/base :: pageHead}"></th:block>
     <style>
-        .detail-price { font-size: 2rem; font-weight: 800; color: #2c3e50; }
-        .detail-label { font-weight: 600; color: #6c757d; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .seller-card { background: #f8f9fa; border-radius: 12px; }
-        .carousel-inner img { height: 420px; object-fit: cover; border-radius: 8px; }
-        .carousel-placeholder { height: 420px; background: #e9ecef; border-radius: 8px; }
-        .spec-item { padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0; }
+        .detail-price { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            color: var(--brand-dark); 
+            font-family: 'Outfit'; 
+            letter-spacing: -1px;
+        }
+        .detail-label { 
+            font-weight: 700; 
+            color: var(--text-muted); 
+            font-size: 0.8rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        .seller-card { 
+            background: #fff; 
+            border: 1px solid var(--border-color);
+            border-radius: 12px; 
+            transition: border-color 0.2s;
+        }
+        .seller-card:hover { border-color: var(--brand-main); }
+        .carousel-inner img { height: 500px; object-fit: cover; border-radius: 12px; }
+        .carousel-placeholder { height: 500px; background: #fff; border: 1px dashed var(--border-color); border-radius: 12px; }
+        .spec-item { padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
         .spec-item:last-child { border-bottom: none; }
+        .spec-card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body>
@@ -20,22 +43,22 @@
 <div th:replace="~{layout/base :: navbar}"></div>
 <div th:replace="~{layout/base :: flashMessages}"></div>
 
-<main class="container my-4">
+<main class="container my-5">
     <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
-            <li class="breadcrumb-item"><a th:href="@{/products}">Catálogo</a></li>
-            <li class="breadcrumb-item active" th:text="${product.title}">Producto</li>
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb" style="font-size: 0.9rem;">
+            <li class="breadcrumb-item"><a th:href="@{/}" style="color: var(--text-muted); text-decoration: none;">Inicio</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/products}" style="color: var(--text-muted); text-decoration: none;">Catálogo</a></li>
+            <li class="breadcrumb-item active fw-bold" th:text="${product.title}" style="color: var(--brand-dark);">Producto</li>
         </ol>
     </nav>
 
-    <div class="row g-4">
+    <div class="row g-5">
         <!-- COLUMNA IZQUIERDA: Imágenes -->
         <div class="col-lg-7">
             <!-- Carrusel de imágenes -->
             <div th:if="${not #lists.isEmpty(product.imagePaths)}"
-                 id="productCarousel" class="carousel slide shadow-sm rounded-3" data-bs-ride="carousel">
+                 id="productCarousel" class="carousel slide rounded-3" data-bs-ride="carousel" style="overflow: hidden; border: 1px solid var(--border-color);">
                 <div class="carousel-indicators" th:if="${#lists.size(product.imagePaths) > 1}">
                     <button th:each="img, iter : ${product.imagePaths}"
                             type="button" data-bs-target="#productCarousel"
@@ -49,7 +72,7 @@
                          th:classappend="${iter.index == 0} ? ' active' : ''">
                         <img th:src="@{/uploads/{img}(img=${img})}"
                              th:alt="${product.title}"
-                             class="d-block w-100">
+                             class="d-block w-100 rounded-0">
                     </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev"
@@ -63,92 +86,89 @@
             </div>
             <!-- Sin imagen -->
             <div th:if="${#lists.isEmpty(product.imagePaths)}"
-                 class="carousel-placeholder d-flex align-items-center justify-content-center shadow-sm">
-                <i class="bi bi-image text-muted" style="font-size: 5rem;"></i>
+                 class="carousel-placeholder d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-camera text-muted mb-3" style="font-size: 4rem; opacity: 0.3;"></i>
+                <p class="text-muted" style="font-family: 'Outfit';">Sin imagen disponible</p>
             </div>
         </div>
 
         <!-- COLUMNA DERECHA: Info + acciones -->
         <div class="col-lg-5">
             <!-- Estado -->
-            <span class="badge fs-6 mb-2"
+            <span class="badge px-3 py-2 fs-6 mb-3 rounded-pill"
                   th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
                   th:text="${product.status.displayName}">Estado</span>
 
-            <h1 class="fw-bold fs-3 mb-2" th:text="${product.title}">Título del producto</h1>
+            <h1 class="fw-bold fs-2 mb-3" th:text="${product.title}" style="letter-spacing: -0.5px;">Título del producto</h1>
 
             <!-- Precio -->
             <div class="detail-price mb-3"
                  th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
 
             <!-- Fecha publicación -->
-            <p class="text-muted small mb-3">
-                <i class="bi bi-calendar3 me-1"></i>
+            <p class="text-muted small mb-4 pb-4 border-bottom" style="border-color: var(--border-color) !important;">
+                <i class="bi bi-calendar-event me-2"></i>
                 Publicado el <span th:text="${#temporals.format(product.createdAt, 'dd/MM/yyyy')}">Fecha</span>
             </p>
 
             <!-- Descripción -->
-            <div class="mb-4">
-                <p class="detail-label mb-1">Descripción</p>
-                <p th:text="${product.description}" style="line-height: 1.6;">Descripción del producto.</p>
+            <div class="mb-5">
+                <p class="detail-label mb-2">La historia de esta pieza</p>
+                <p th:text="${product.description}" style="line-height: 1.7; font-size: 1.05rem; color: #333;">Descripción del producto.</p>
             </div>
 
             <!-- Especificaciones según tipo de producto -->
 
             <!-- VEHÍCULO -->
             <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.VehicleProduct)}"
-                 class="card border-0 bg-light rounded-3 p-3 mb-4">
-                <h6 class="fw-bold mb-3"><i class="bi bi-car-front me-2 text-primary"></i>Datos del vehículo</h6>
-                <div class="row g-2">
-                    <div class="col-6 spec-item">
+                 class="spec-card p-4 mb-5">
+                <h6 class="fw-bold mb-4" style="font-family: 'Outfit'; font-size: 1.1rem;"><i class="bi bi-car-front me-2" style="color: var(--accent);"></i>Ficha técnica</h6>
+                <div class="row g-0">
+                    <div class="col-6 spec-item pe-3">
                         <div class="detail-label">Marca</div>
                         <div class="fw-semibold" th:text="${product.brand}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item ps-3" style="border-left: 1px solid var(--border-color);">
                         <div class="detail-label">Modelo</div>
                         <div class="fw-semibold" th:text="${product.model}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item pe-3">
                         <div class="detail-label">Año</div>
                         <div class="fw-semibold" th:text="${product.year}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item ps-3" style="border-left: 1px solid var(--border-color);">
                         <div class="detail-label">Kilometraje</div>
                         <div class="fw-semibold" th:text="${#numbers.formatInteger(product.mileage, 1, 'COMMA')} + ' km'">— km</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item pe-3 border-bottom-0">
                         <div class="detail-label">Combustible</div>
                         <div class="fw-semibold" th:text="${product.fuelType.displayName}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item ps-3 border-bottom-0" style="border-left: 1px solid var(--border-color);">
                         <div class="detail-label">Cambio</div>
                         <div class="fw-semibold" th:text="${product.gearboxType.displayName}">—</div>
-                    </div>
-                    <div class="col-6 spec-item">
-                        <div class="detail-label">Puertas</div>
-                        <div class="fw-semibold" th:text="${product.doors}">—</div>
                     </div>
                 </div>
             </div>
 
             <!-- ROPA -->
             <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.ClothingProduct)}"
-                 class="card border-0 bg-light rounded-3 p-3 mb-4">
-                <h6 class="fw-bold mb-3"><i class="bi bi-bag me-2 text-primary"></i>Datos de la prenda</h6>
-                <div class="row g-2">
-                    <div class="col-6 spec-item">
+                 class="spec-card p-4 mb-5">
+                <h6 class="fw-bold mb-4" style="font-family: 'Outfit'; font-size: 1.1rem;"><i class="bi bi-tag me-2" style="color: var(--accent);"></i>Detalles de la prenda</h6>
+                <div class="row g-0">
+                    <div class="col-6 spec-item pe-3">
                         <div class="detail-label">Marca</div>
                         <div class="fw-semibold" th:text="${product.brand}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item ps-3" style="border-left: 1px solid var(--border-color);">
                         <div class="detail-label">Talla</div>
                         <div class="fw-semibold" th:text="${product.size}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item pe-3 border-bottom-0">
                         <div class="detail-label">Color</div>
                         <div class="fw-semibold" th:text="${product.color}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item ps-3 border-bottom-0" style="border-left: 1px solid var(--border-color);">
                         <div class="detail-label">Género</div>
                         <div class="fw-semibold" th:text="${product.gender}">—</div>
                     </div>
@@ -157,14 +177,14 @@
 
             <!-- HOGAR -->
             <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.HomeProduct)}"
-                 class="card border-0 bg-light rounded-3 p-3 mb-4">
-                <h6 class="fw-bold mb-3"><i class="bi bi-house me-2 text-primary"></i>Datos del artículo</h6>
-                <div class="row g-2">
-                    <div class="col-6 spec-item">
+                 class="spec-card p-4 mb-5">
+                <h6 class="fw-bold mb-4" style="font-family: 'Outfit'; font-size: 1.1rem;"><i class="bi bi-house me-2" style="color: var(--accent);"></i>Información del artículo</h6>
+                <div class="row g-0">
+                    <div class="col-6 spec-item pe-3 border-bottom-0">
                         <div class="detail-label">Condición</div>
                         <div class="fw-semibold" th:text="${product.condition.displayName}">—</div>
                     </div>
-                    <div class="col-6 spec-item">
+                    <div class="col-6 spec-item ps-3 border-bottom-0" style="border-left: 1px solid var(--border-color);">
                         <div class="detail-label">Dimensiones</div>
                         <div class="fw-semibold" th:text="${product.dimensions}">—</div>
                     </div>
@@ -172,57 +192,57 @@
             </div>
 
             <!-- ACCIONES -->
-            <!-- Añadir al carrito (solo autenticado, solo disponible, solo si no es el dueño) -->
-            <div sec:authorize="isAuthenticated()">
+            <!-- Añadir al carrito -->
+            <div class="mb-4" sec:authorize="isAuthenticated()">
                 <form th:if="${product.status.name() == 'AVAILABLE' and product.seller.username != #authentication.name}"
                       method="POST" th:action="@{/cart/add/{id}(id=${product.id})}">
-                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
-                        <i class="bi bi-cart-plus me-2"></i>Añadir al carrito
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3 d-flex justify-content-center align-items-center gap-2" style="font-size: 1.1rem;">
+                        <i class="bi bi-bag-plus"></i> Añadir a tu colección
                     </button>
                 </form>
                 <div th:if="${product.status.name() == 'SOLD'}"
-                     class="alert alert-secondary text-center mb-2">
-                    <i class="bi bi-lock me-1"></i>Este producto ya ha sido vendido
+                     class="alert text-center py-3" style="background-color: var(--brand-light); border: none; color: var(--brand-dark); font-weight: 500;">
+                    <i class="bi bi-lock me-2"></i>Esta pieza ya encontró un hogar
                 </div>
             </div>
             <!-- Enlace para anónimos -->
-            <div sec:authorize="isAnonymous()">
-                <a th:href="@{/login}" class="btn btn-primary btn-lg w-100 mb-2">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Inicia sesión para comprar
+            <div class="mb-4" sec:authorize="isAnonymous()">
+                <a th:href="@{/login}" class="btn btn-primary btn-lg w-100 py-3 text-center" style="font-size: 1.1rem;">
+                    Identifícate para comprar
                 </a>
             </div>
 
             <!-- Acciones del propietario -->
             <div sec:authorize="isAuthenticated()"
                  th:if="${product.seller.username == #authentication.name}"
-                 class="d-flex gap-2">
+                 class="d-flex gap-3 mb-4">
                 <a th:href="@{/my/products/{id}/edit(id=${product.id})}"
-                   class="btn btn-outline-primary flex-fill">
-                    <i class="bi bi-pencil me-1"></i>Editar
+                   class="btn btn-outline-primary flex-fill py-2">
+                    <i class="bi bi-pencil me-2"></i>Editar anuncio
                 </a>
                 <form method="POST" th:action="@{/my/products/{id}/delete(id=${product.id})}"
-                      onsubmit="return confirm('¿Seguro que quieres eliminar este anuncio?')">
-                    <button type="submit" class="btn btn-outline-danger">
-                        <i class="bi bi-trash me-1"></i>Borrar
+                      onsubmit="return confirm('¿Seguro que quieres eliminar este anuncio? Todos los recuerdos se perderán.');" class="flex-fill">
+                    <button type="submit" class="btn btn-outline-dark w-100 py-2">
+                        <i class="bi bi-trash me-2"></i>Eliminar
                     </button>
                 </form>
             </div>
 
             <!-- INFO VENDEDOR -->
-            <div class="seller-card p-3 mt-4 d-flex align-items-center gap-3">
+            <div class="seller-card p-4 d-flex align-items-center gap-4">
                 <img th:if="${product.seller.avatarPath != null and !#strings.isEmpty(product.seller.avatarPath)}"
                      th:src="@{/uploads/{img}(img=${product.seller.avatarPath})}"
-                     class="rounded-circle shadow-sm"
-                     style="width: 56px; height: 56px; object-fit: cover;"
+                     class="rounded-circle"
+                     style="width: 72px; height: 72px; object-fit: cover; border: 2px solid var(--brand-light);"
                      alt="Avatar vendedor">
                 <div th:if="${product.seller.avatarPath == null or #strings.isEmpty(product.seller.avatarPath)}"
-                     class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
-                     style="width: 56px; height: 56px; flex-shrink: 0;">
-                    <i class="bi bi-person-fill text-white fs-4"></i>
+                     class="rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 72px; height: 72px; background-color: var(--brand-light); flex-shrink: 0;">
+                    <i class="bi bi-person-fill fs-2" style="color: var(--brand-dark);"></i>
                 </div>
                 <div>
-                    <p class="detail-label mb-0">Vendedor</p>
-                    <p class="fw-bold mb-0" th:text="${product.seller.username}">Vendedor</p>
+                    <p class="detail-label mb-1">Vendedor asociado</p>
+                    <p class="fw-bold mb-0" style="font-family: 'Outfit'; font-size: 1.25rem;" th:text="${product.seller.username}">Vendedor</p>
                 </div>
             </div>
         </div>

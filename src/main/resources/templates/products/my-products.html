@@ -11,86 +11,87 @@
 <div th:replace="~{layout/base :: navbar}"></div>
 <div th:replace="~{layout/base :: flashMessages}"></div>
 
-<main class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="section-title mb-0">Mis productos</h1>
+<main class="container my-5">
+    <div class="d-flex justify-content-between align-items-end mb-4 border-bottom pb-3" style="border-color: var(--border-color) !important;">
+        <h1 class="section-title mb-0" style="font-size: 2.2rem; border:none; padding:0; letter-spacing: -1px;">Archivador personal</h1>
         <a th:href="@{/my/products/new}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i>Publicar nuevo anuncio
+            <i class="bi bi-stars me-2"></i>Nueva publicación
         </a>
     </div>
 
     <!-- Con productos -->
     <div th:if="${not #lists.isEmpty(products)}">
-        <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="card border-0 rounded-3 overflow-hidden" style="border: 1px solid var(--border-color) !important;">
             <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
+                <table class="table mb-0 align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th style="width:80px;">Imagen</th>
-                            <th>Título</th>
-                            <th>Precio</th>
-                            <th>Estado</th>
-                            <th>Fecha</th>
-                            <th>Dir. envío</th>
-                            <th class="text-center">Acciones</th>
+                            <th style="width:80px;" class="py-3 px-4">Pieza</th>
+                            <th class="py-3">Descripción</th>
+                            <th class="py-3">Valor</th>
+                            <th class="py-3">Estatus</th>
+                            <th class="py-3">Registro</th>
+                            <th class="py-3">Destino</th>
+                            <th class="text-center py-3">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="product : ${products}">
+                        <tr th:each="product : ${products}" style="border-bottom: 1px solid var(--border-color);">
                             <!-- Imagen miniatura -->
-                            <td>
+                            <td class="px-4 py-3">
                                 <img th:if="${not #lists.isEmpty(product.imagePaths)}"
                                      th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
                                      th:alt="${product.title}"
-                                     class="rounded"
-                                     style="width:60px; height:60px; object-fit:cover;">
+                                     class="rounded-3"
+                                     style="width:64px; height:64px; object-fit:cover; border: 1px solid var(--border-color);">
                                 <div th:if="${#lists.isEmpty(product.imagePaths)}"
-                                     class="rounded bg-light d-flex align-items-center justify-content-center"
-                                     style="width:60px; height:60px;">
-                                    <i class="bi bi-image text-muted"></i>
+                                     class="rounded-3 d-flex align-items-center justify-content-center"
+                                     style="width:64px; height:64px; background-color: var(--brand-light);">
+                                    <i class="bi bi-camera text-muted" style="opacity: 0.5;"></i>
                                 </div>
                             </td>
                             <!-- Título -->
-                            <td>
+                            <td class="py-3">
                                 <a th:href="@{/products/{id}(id=${product.id})}"
-                                   class="text-decoration-none fw-semibold text-dark"
+                                   class="text-decoration-none fw-bold text-dark"
+                                   style="font-family: 'Outfit'; font-size: 1.1rem;"
                                    th:text="${product.title}">Título</a>
                             </td>
                             <!-- Precio -->
-                            <td class="fw-bold"
+                            <td class="fw-bold py-3" style="color: var(--brand-dark);"
                                 th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</td>
                             <!-- Estado -->
-                            <td>
-                                <span class="badge"
+                            <td class="py-3">
+                                <span class="badge px-3 py-2 rounded-pill"
                                       th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : (${product.status.name() == 'SHIPPED'} ? ' bg-success' : ' badge-sold')"
                                       th:text="${product.status.displayName}">Estado</span>
                             </td>
                             <!-- Fecha -->
-                            <td class="text-muted small"
+                            <td class="text-muted small py-3" style="font-weight: 500;"
                                 th:text="${#temporals.format(product.createdAt, 'dd/MM/yyyy')}">—</td>
                             <!-- Dirección de envío (solo para SOLD y SHIPPED) -->
-                            <td>
-                                <span th:if="${product.status.name() == 'AVAILABLE'}" class="text-muted small">—</span>
+                            <td class="py-3">
+                                <span th:if="${product.status.name() == 'AVAILABLE'}" class="text-muted small" style="opacity: 0.5;">Pendiente</span>
                                 <span th:if="${product.status.name() != 'AVAILABLE' and productOrders[product.id] != null}"
-                                      class="small"
-                                      style="max-width:200px; display:inline-block; word-break:break-word;"
+                                      class="small px-2 py-1 rounded"
+                                      style="background-color: var(--brand-light); color: var(--brand-dark); max-width:200px; display:inline-block; word-break:break-word; border: 1px solid var(--border-color);"
                                       th:text="${productOrders[product.id].shippingAddress}">—</span>
                                 <span th:if="${product.status.name() != 'AVAILABLE' and productOrders[product.id] == null}"
-                                      class="text-muted small">Sin datos</span>
+                                      class="text-muted small">Datos no provistos</span>
                             </td>
                             <!-- Acciones -->
-                            <td class="text-center">
+                            <td class="text-center py-3">
                                 <!-- Disponible: editar y borrar -->
                                 <div class="d-flex justify-content-center gap-2"
                                      th:if="${product.status.name() == 'AVAILABLE'}">
                                     <a th:href="@{/my/products/{id}/edit(id=${product.id})}"
-                                       class="btn btn-sm btn-outline-primary" title="Editar">
+                                       class="btn btn-sm btn-outline-primary" title="Modificar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <form method="POST" th:action="@{/my/products/{id}/delete(id=${product.id})}"
-                                          onsubmit="return confirm('¿Seguro que quieres eliminar «' + this.dataset.title + '»?')"
+                                          onsubmit="return confirm('¿Seguro que quieres retirar este artículo?')"
                                           th:data-title="${product.title}">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Borrar">
+                                        <button type="submit" class="btn btn-sm btn-outline-dark" title="Retirar">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -98,16 +99,16 @@
                                 <!-- Vendido: confirmar envío -->
                                 <div th:if="${product.status.name() == 'SOLD'}">
                                     <form method="POST" th:action="@{/my/products/{id}/ship(id=${product.id})}"
-                                          onsubmit="return confirm('¿Confirmas que has enviado «' + this.dataset.title + '»?')"
+                                          onsubmit="return confirm('¿Confirmas que el paquete está en tránsito?')"
                                           th:data-title="${product.title}">
-                                        <button type="submit" class="btn btn-sm btn-success" title="Confirmar envío">
-                                            <i class="bi bi-truck me-1"></i>Confirmar envío
+                                        <button type="submit" class="btn btn-sm btn-dark" style="background-color: #27ae60; border-color: #27ae60; font-family: 'Inter';" title="Confirmar envío">
+                                            <i class="bi bi-truck me-1"></i>Enviado
                                         </button>
                                     </form>
                                 </div>
                                 <!-- Enviado: sin acciones -->
-                                <span th:if="${product.status.name() == 'SHIPPED'}" class="text-muted small">
-                                    <i class="bi bi-check-circle-fill text-success me-1"></i>Enviado
+                                <span th:if="${product.status.name() == 'SHIPPED'}" class="text-muted small fw-bold" style="color: #27ae60 !important;">
+                                    <i class="bi bi-check-circle-fill me-1"></i>Completado
                                 </span>
                             </td>
                         </tr>
@@ -115,17 +116,17 @@
                 </table>
             </div>
         </div>
-        <p class="text-muted small mt-2 text-end"
-           th:text="${#lists.size(products)} + ' producto(s) publicado(s)'"></p>
+        <p class="text-muted small mt-3 text-end" style="font-family: 'Outfit'; font-weight: 500;"
+           th:text="${#lists.size(products)} + ' pieza(s) en tu archivador'"></p>
     </div>
 
     <!-- Sin productos -->
-    <div th:if="${#lists.isEmpty(products)}" class="text-center py-5">
-        <i class="bi bi-box-seam display-1 text-muted"></i>
-        <h4 class="mt-3 text-muted">Aún no has publicado ningún producto</h4>
-        <p class="text-muted">Empieza publicando tu primer anuncio ahora mismo.</p>
-        <a th:href="@{/my/products/new}" class="btn btn-primary mt-2">
-            <i class="bi bi-plus-circle me-1"></i>Publicar anuncio
+    <div th:if="${#lists.isEmpty(products)}" class="text-center py-5 my-4" style="border: 1px dashed var(--border-color); border-radius: 12px; background-color: #fff;">
+        <i class="bi bi-collection display-1 text-muted" style="opacity: 0.2;"></i>
+        <h4 class="mt-3" style="font-family: 'Outfit'; color: var(--brand-dark);">Aún no tienes publicaciones activas</h4>
+        <p class="text-muted mb-4">¿Tienes objetos buscando una nueva historia? Este es su lugar.</p>
+        <a th:href="@{/my/products/new}" class="btn btn-primary px-4 py-2">
+            <i class="bi bi-stars me-2"></i>Crear primera publicación
         </a>
     </div>
 </main>

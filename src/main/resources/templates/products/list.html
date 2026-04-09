@@ -37,39 +37,44 @@
     <div class="row g-4">
         <!-- FILTROS LATERALES -->
         <div class="col-lg-3">
-            <div class="card border-0 shadow-sm rounded-3 mb-3">
-                <div class="card-header bg-white fw-bold border-0 pt-3">
-                    <i class="bi bi-funnel me-2 text-primary"></i>Filtrar por categoría
+            <div class="card mb-4">
+                <div class="card-header bg-white fw-bold pt-4 pb-3" style="border-bottom: 1px dashed var(--border-color); font-family: 'Outfit'; font-size: 1.1rem; color: var(--brand-dark);">
+                    Explorar
                 </div>
-                <div class="list-group list-group-flush px-2 pb-3">
+                <div class="list-group list-group-flush px-3 py-3 gap-2">
                     <a th:href="@{/products}"
-                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
-                       th:classappend="${param.category == null} ? ' active' : ''">
-                        <i class="bi bi-grid me-2"></i>Todos
+                       style="border: 1px solid transparent; border-radius: 8px; transition: all 0.2s;"
+                       class="list-group-item list-group-item-action d-flex align-items-center mb-1"
+                       th:classappend="${param.category == null} ? ' border-primary bg-light fw-bold text-primary' : ' text-muted'">
+                       <i class="bi bi-grid me-3 fs-5"></i> Todos
                     </a>
                     <a th:href="@{/products(category='VEHICLE')}"
-                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
-                       th:classappend="${param.category != null and param.category[0] == 'VEHICLE'} ? ' active' : ''">
-                        <i class="bi bi-car-front me-2"></i>Vehículos
+                       style="border: 1px solid transparent; border-radius: 8px; transition: all 0.2s;"
+                       class="list-group-item list-group-item-action d-flex align-items-center mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'VEHICLE'} ? ' border-primary bg-light fw-bold text-primary' : ' text-muted'">
+                        <i class="bi bi-car-front me-3 fs-5"></i> Vehículos
                     </a>
                     <a th:href="@{/products(category='CLOTHING')}"
-                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
-                       th:classappend="${param.category != null and param.category[0] == 'CLOTHING'} ? ' active' : ''">
-                        <i class="bi bi-bag me-2"></i>Ropa
+                       style="border: 1px solid transparent; border-radius: 8px; transition: all 0.2s;"
+                       class="list-group-item list-group-item-action d-flex align-items-center mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'CLOTHING'} ? ' border-primary bg-light fw-bold text-primary' : ' text-muted'">
+                        <i class="bi bi-bag me-3 fs-5"></i> Ropa
                     </a>
                     <a th:href="@{/products(category='HOME')}"
-                       class="list-group-item list-group-item-action border-0 rounded-2 mb-1"
-                       th:classappend="${param.category != null and param.category[0] == 'HOME'} ? ' active' : ''">
-                        <i class="bi bi-house me-2"></i>Hogar
+                       style="border: 1px solid transparent; border-radius: 8px; transition: all 0.2s;"
+                       class="list-group-item list-group-item-action d-flex align-items-center mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'HOME'} ? ' border-primary bg-light fw-bold text-primary' : ' text-muted'">
+                        <i class="bi bi-house me-3 fs-5"></i> Hogar
                     </a>
                 </div>
             </div>
 
             <!-- CTA publicar -->
-            <div class="card border-0 shadow-sm rounded-3 text-center p-3" sec:authorize="isAuthenticated()">
-                <i class="bi bi-plus-circle display-5 text-primary mb-2"></i>
-                <p class="small text-muted mb-2">¿Tienes algo que vender?</p>
-                <a th:href="@{/my/products/new}" class="btn btn-primary btn-sm">Publicar anuncio</a>
+            <div class="card p-4 text-center mt-3" sec:authorize="isAuthenticated()" style="background-color: var(--brand-light); border-color: var(--brand-light);">
+                <i class="bi bi-stars display-5 mb-3" style="color: var(--brand-main);"></i>
+                <h5 class="fw-bold" style="font-family:'Outfit'; color: var(--brand-dark);">¿Tienes algo único?</h5>
+                <p class="small text-muted mb-3">Dale una segunda vida publicándolo hoy mismo.</p>
+                <a th:href="@{/my/products/new}" class="btn btn-primary w-100">Publicar anuncio</a>
             </div>
         </div>
 
@@ -89,52 +94,54 @@
             <div class="row g-4" th:if="${not #lists.isEmpty(productos)}">
                 <div class="col-sm-6 col-xl-4" th:each="product : ${productos}">
                     <div class="card product-card h-100">
-                        <div style="position: relative; height: 200px; background: #f0f0f0;">
+                        <div style="position: relative; height: 240px; background: #fdfdfc;">
                             <img th:if="${not #lists.isEmpty(product.imagePaths)}"
                                  th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
                                  th:alt="${product.title}"
-                                 style="width:100%; height:200px; object-fit:cover;">
+                                 style="width:100%; height:240px; object-fit:cover;">
                             <div th:if="${#lists.isEmpty(product.imagePaths)}"
-                                 class="d-flex align-items-center justify-content-center w-100 h-100">
-                                <i class="bi bi-image text-muted" style="font-size:3rem;"></i>
+                                 class="d-flex align-items-center justify-content-center w-100 h-100" style="border-bottom: 1px solid var(--border-color);">
+                                <i class="bi bi-camera text-muted" style="font-size:3rem; opacity: 0.3;"></i>
                             </div>
-                            <span class="badge position-absolute top-0 end-0 m-2"
+                            <span class="badge position-absolute top-0 end-0 m-3 px-3 py-2 fs-6 rounded-pill"
                                   th:classappend="${product.status.name() == 'AVAILABLE'} ? ' badge-available' : ' badge-sold'"
                                   th:text="${product.status.displayName}">Estado</span>
                         </div>
-                        <div class="card-body d-flex flex-column p-3">
-                            <h6 class="card-title text-truncate mb-1 fw-semibold"
-                                th:text="${product.title}">Título</h6>
-                            <!-- Categoría badge -->
-                            <span class="badge bg-secondary mb-2 me-auto"
-                                  th:text="${product.categoryEnum?.displayName ?: ''}">Categoría</span>
-                            <div class="price mb-1"
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title text-truncate mb-1 fw-bold" style="font-family:'Outfit';"
+                                th:text="${product.title}">Título</h5>
+                            <div class="price mb-2"
                                  th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">
                                 0,00 €
                             </div>
-                            <small class="text-muted mb-3"
-                                   th:text="${'Publicado el ' + #temporals.format(product.createdAt, 'dd/MM/yyyy')}">Fecha</small>
-                            <a th:href="@{/products/{id}(id=${product.id})}"
-                               class="btn btn-primary btn-sm mt-auto stretched-link">
-                                Ver detalles <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
+                            <!-- Categoría -->
+                            <div class="mt-auto pt-3 border-top" style="border-color: var(--border-color) !important;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted small" style="text-transform: uppercase; font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;"
+                                        th:text="${product.categoryEnum?.displayName ?: ''}">Categoría</span>
+                                    <a th:href="@{/products/{id}(id=${product.id})}"
+                                       class="btn btn-outline-primary btn-sm stretched-link rounded-pill px-3">
+                                        Ver <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Sin resultados -->
-            <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
-                <i class="bi bi-search display-1 text-muted"></i>
-                <h4 class="mt-3 text-muted">No se encontraron productos</h4>
-                <p class="text-muted"
+            <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5" style="border: 1px dashed var(--border-color); border-radius: 12px; background-color: #fff;">
+                <i class="bi bi-binoculars display-1 text-muted" style="opacity: 0.2;"></i>
+                <h4 class="mt-3" style="color:var(--brand-dark);">Ningún tesoro a la vista</h4>
+                <p class="text-muted mb-4"
                    th:if="${query != null and !#strings.isEmpty(query)}"
-                   th:text="'No hay resultados para «' + ${query} + '». Prueba con otra búsqueda.'">
+                   th:text="'No encontramos nada que coincida con «' + ${query} + '». Prueba ampliando tus términos.'">
                 </p>
-                <p class="text-muted" th:if="${query == null or #strings.isEmpty(query)}">
-                    Aún no hay productos en esta categoría.
+                <p class="text-muted mb-4" th:if="${query == null or #strings.isEmpty(query)}">
+                    Esta categoría todavía está vacía.
                 </p>
-                <a th:href="@{/products}" class="btn btn-outline-primary mt-2">Ver todos los productos</a>
+                <a th:href="@{/products}" class="btn btn-outline-primary">Ver catálogo completo</a>
             </div>
         </div>
     </div>

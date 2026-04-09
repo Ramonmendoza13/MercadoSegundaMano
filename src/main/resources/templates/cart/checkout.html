@@ -14,64 +14,65 @@
 <div th:replace="~{layout/base :: navbar}"></div>
 <div th:replace="~{layout/base :: flashMessages}"></div>
 
-<main class="container my-4" style="max-width: 800px;">
-    <h1 class="section-title">Tramitar pedido</h1>
+<main class="container my-5" style="max-width: 800px;">
+    <h1 class="section-title mb-4" style="font-size: 2.2rem; border:none; padding:0; letter-spacing: -1px;">Finalizar compra</h1>
 
-    <div class="alert alert-info border-0 shadow-sm mb-4">
-        <i class="bi bi-info-circle-fill me-2"></i>
-        <strong>Modo prueba:</strong> Usa la tarjeta <code>4242 4242 4242 4242</code>
+    <div class="alert mb-4 pb-3" style="background-color: var(--brand-light); border: none; color: var(--brand-dark); border-radius: 8px;">
+        <i class="bi bi-info-circle-fill me-2" style="color: var(--brand-main);"></i>
+        <strong>Modo demostración:</strong> Emplee la tarjeta <code>4242 4242 4242 4242</code> y cualquier fecha/CVV.
     </div>
 
-    <div class="row g-4">
+    <div class="row g-5">
 
         <!-- FORMULARIO -->
         <div class="col-md-7">
-            <div class="card border-0 shadow-sm rounded-3 p-4">
+            <div class="card p-4 rounded-4" style="border: 1px solid var(--border-color); background-color: #fff;">
 
-                <h5 class="fw-bold mb-3">
-                    <i class="bi bi-geo-alt me-2 text-primary"></i>Dirección de envío
+                <h5 class="fw-bold mb-4 pb-2 border-bottom" style="font-family: 'Outfit'; color: var(--brand-dark);">
+                    <i class="bi bi-geo-alt me-2" style="color: var(--brand-main);"></i>Datos de entrega
                 </h5>
 
                 <!-- DIRECCIÓN -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Dirección</label>
-                    <input type="text" id="street" class="form-control" required>
+                <div class="mb-4">
+                    <label class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Dirección completa</label>
+                    <input type="text" id="street" class="form-control" style="border-radius: 8px; border-color: var(--border-color);" required>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-semibold">Código Postal</label>
-                        <input type="text" id="postalCode" class="form-control" required>
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <label class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Código Postal</label>
+                        <input type="text" id="postalCode" class="form-control" style="border-radius: 8px; border-color: var(--border-color);" required>
                     </div>
 
-                    <div class="col-md-8 mb-3">
-                        <label class="form-label fw-semibold">Ciudad</label>
-                        <input type="text" id="city" class="form-control" required>
+                    <div class="col-md-8">
+                        <label class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Localidad</label>
+                        <input type="text" id="city" class="form-control" style="border-radius: 8px; border-color: var(--border-color);" required>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Provincia</label>
-                    <input type="text" id="province" class="form-control" required>
+                <div class="mb-5">
+                    <label class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Provincia / Región</label>
+                    <input type="text" id="province" class="form-control" style="border-radius: 8px; border-color: var(--border-color);" required>
                 </div>
 
                 <!-- PAGO STRIPE -->
-                <hr>
-                <h6 class="fw-bold mt-3">Pago</h6>
+                <h5 class="fw-bold mb-4 pb-2 border-bottom" style="font-family: 'Outfit'; color: var(--brand-dark);">
+                    <i class="bi bi-credit-card me-2" style="color: var(--brand-main);"></i>Detalles de pago
+                </h5>
 
-                <div id="payment-element" class="mb-3"></div>
+                <div id="payment-element" class="mb-4 p-3 rounded" style="background-color: #fcfcfc; border: 1px solid var(--border-color);"></div>
 
-                <div id="payment-errors" class="alert alert-danger d-none"></div>
+                <div id="payment-errors" class="alert alert-danger d-none" style="border-radius: 8px;"></div>
 
-                <button id="submit-btn" class="btn btn-primary w-100 btn-lg">
-                    <span id="btn-text">Confirmar compra</span>
+                <button id="submit-btn" class="btn btn-primary w-100 btn-lg shadow-none py-3 mt-2" style="font-size: 1.1rem; border-radius: 8px;">
+                    <span id="btn-text">Efectuar pago seguro</span>
                     <span id="btn-spinner" class="d-none">
-                        <span class="spinner-border spinner-border-sm me-2"></span>Procesando...
+                        <span class="spinner-border spinner-border-sm me-2"></span>Validando transacción...
                     </span>
                 </button>
 
-                <a th:href="@{/cart}" class="btn btn-outline-secondary w-100 mt-2">
-                    Volver al carrito
+                <a th:href="@{/cart}" class="btn btn-link text-muted text-decoration-none w-100 mt-3 d-block text-center" style="font-weight: 500;">
+                    <i class="bi bi-arrow-left me-1"></i>Regresar a la selección
                 </a>
 
             </div>
@@ -79,23 +80,32 @@
 
         <!-- RESUMEN -->
         <div class="col-md-5">
-            <div class="card border-0 shadow-sm rounded-3 p-4">
-                <h5 class="fw-bold mb-3">
-                    <i class="bi bi-receipt me-2 text-primary"></i>Resumen
+            <div class="card p-4 rounded-4" style="background-color: var(--brand-light); border: none; top: 20px; position: sticky;">
+                <h5 class="fw-bold mb-4" style="font-family: 'Outfit'; color: var(--brand-dark);">
+                    Tu adquisición
                 </h5>
 
-                <div th:each="item : ${cart.items}" class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom">
+                <div th:each="item : ${cart.items}" class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom" style="border-color: rgba(0,0,0,0.1) !important;">
+                    <img th:if="${not #lists.isEmpty(item.product.imagePaths)}"
+                         th:src="@{/uploads/{img}(img=${item.product.imagePaths[0]})}"
+                         class="rounded"
+                         style="width:48px; height:48px; object-fit:cover; border: 1px solid rgba(0,0,0,0.1);"
+                         th:alt="${item.product.title}">
+                    <div th:if="${#lists.isEmpty(item.product.imagePaths)}"
+                         class="rounded d-flex align-items-center justify-content-center"
+                         style="width:48px; height:48px; background-color: #e9ecef;">
+                    </div>
                     <div class="flex-grow-1 min-width-0">
-                        <div class="small fw-semibold text-truncate"
+                        <div class="fw-semibold text-truncate" style="font-family: 'Outfit';"
                              th:text="${item.product.title}">Producto</div>
                     </div>
-                    <div class="small fw-bold text-nowrap"
+                    <div class="fw-bold text-nowrap" style="color: var(--brand-dark);"
                          th:text="${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 2, 'POINT')} + ' €'"></div>
                 </div>
 
-                <div class="d-flex justify-content-between mt-2">
-                    <strong class="fs-5">Total</strong>
-                    <strong class="fs-5 text-primary"
+                <div class="d-flex justify-content-between align-items-end mt-4">
+                    <span class="fs-6 text-muted" style="font-weight: 500; text-transform: uppercase; font-size: 0.8rem;">Importe total</span>
+                    <strong class="fs-3" style="font-family: 'Outfit'; font-weight: 800; color: var(--brand-main); letter-spacing: -1px;"
                             th:text="${#numbers.formatDecimal(cart.total, 1, 'COMMA', 2, 'POINT')} + ' €'"></strong>
                 </div>
             </div>
