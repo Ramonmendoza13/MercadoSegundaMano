@@ -6,6 +6,7 @@ import com.mercado.mercadosegundamano.model.User;
 import com.mercado.mercadosegundamano.repository.UserRepository;
 import com.mercado.mercadosegundamano.service.CartService;
 import com.mercado.mercadosegundamano.service.OrderService;
+import com.mercado.mercadosegundamano.service.StripeService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -19,13 +20,17 @@ public class CartController {
     private final CartService cartService;
     private final OrderService orderService;
     private final UserRepository userRepository;
+    // Inyecta StripeService en CartController
+    private final StripeService stripeService;
 
     public CartController(CartService cartService,
                           OrderService orderService,
-                          UserRepository userRepository) {
+                          UserRepository userRepository,
+                          StripeService stripeService) {
         this.cartService = cartService;
         this.orderService = orderService;
         this.userRepository = userRepository;
+        this.stripeService = stripeService;
     }
 
     // Metodo auxiliar para obtener la entidad User desde Spring Security
@@ -103,14 +108,30 @@ public class CartController {
 
     @GetMapping("/checkout")
     public String showCheckout(@AuthenticationPrincipal UserDetails userDetails,
-                               Model model) {
+                               Model model,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = getCurrentUser(userDetails);
+            Cart cart = cartService.getOrCreateCart(currentUser);
 
-        User currentUser = getCurrentUser(userDetails);
-        Cart cart = cartService.getOrCreateCart(currentUser);
+            if (cart.getItems().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "El carrito esta vacio");
+                return "redirect:/cart";
+            }
 
-        model.addAttribute("cart", cart);
+            // Creamos el PaymentIntent con el total del carrito
+            String clientSecret = stripeService.createPaymentIntent(cart.getTotal());
 
-        return "cart/checkout";
+            model.addAttribute("cart", cart);
+            model.addAttribute("stripePublishableKey", stripeService.getPublishableKey());
+            model.addAttribute("clientSecret", clientSecret);
+
+            return "cart/checkout";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al preparar el pago");
+            return "redirect:/cart";
+        }
     }
 
     // ── POST /cart/checkout ───────────────────────────────────────
@@ -137,6 +158,31 @@ public class CartController {
 
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error al procesar el pedido: " + e.getMessage());
+            return "redirect:/cart";
+        }
+    }
+
+    // GET /cart/checkout/success — Stripe redirige aqui tras pago exitoso
+    @GetMapping("/cart/checkout/success")
+    public String checkoutSuccess(@RequestParam String address,
+                                  @RequestParam String payment_intent,
+                                  @AuthenticationPrincipal UserDetails userDetails,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            User currentUser = getCurrentUser(userDetails);
+
+            // Procesamos el pedido: marca productos como SOLD y vacia el carrito
+            orderService.checkout(currentUser, address);
+
+            // Enviamos email de confirmacion (si tienes EmailService configurado)
+            // emailService.sendOrderConfirmationEmail(currentUser.getEmail(), ...);
+
+            redirectAttributes.addFlashAttribute("success",
+                    "Pago realizado correctamente. Pronto recibiras tu pedido.");
+            return "redirect:/my/products/orders";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al procesar el pedido");
             return "redirect:/cart";
         }
     }

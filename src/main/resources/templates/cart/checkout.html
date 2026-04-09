@@ -5,6 +5,9 @@
 <head>
     <title>Tramitar pedido | Mercado Segunda Mano</title>
     <th:block th:replace="~{layout/base :: pageHead}"></th:block>
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -14,14 +17,13 @@
 <main class="container my-4" style="max-width: 800px;">
     <h1 class="section-title">Tramitar pedido</h1>
 
-    <!-- Nota informativa -->
     <div class="alert alert-info border-0 shadow-sm mb-4">
         <i class="bi bi-info-circle-fill me-2"></i>
-        <strong>Simulación de compra:</strong> Este es un marketplace de demostración. No se realizará ningún cargo real ni se procesará ninguna pasarela de pago.
+        <strong>Modo prueba:</strong> Usa la tarjeta <code>4242 4242 4242 4242</code>
     </div>
 
     <div class="row g-4">
-        <!-- Formulario de envío -->
+
         <!-- FORMULARIO -->
         <div class="col-md-7">
             <div class="card border-0 shadow-sm rounded-3 p-4">
@@ -30,139 +32,132 @@
                     <i class="bi bi-geo-alt me-2 text-primary"></i>Dirección de envío
                 </h5>
 
-                <form method="POST" th:action="@{/cart/checkout}" class="needs-validation" novalidate>
+                <!-- DIRECCIÓN -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Dirección</label>
+                    <input type="text" id="street" class="form-control" required>
+                </div>
 
-                    <!-- Dirección -->
-                    <div class="mb-3">
-                        <label for="street" class="form-label fw-semibold">
-                            Dirección (calle y número)
-                        </label>
-                        <input type="text" id="street" name="street"
-                               class="form-control" required>
-                        <div class="invalid-feedback">Introduce la dirección.</div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Código Postal</label>
+                        <input type="text" id="postalCode" class="form-control" required>
                     </div>
 
-                    <!-- CP + Ciudad -->
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="postalCode" class="form-label fw-semibold">
-                                Código Postal
-                            </label>
-                            <input type="text" id="postalCode" name="postalCode"
-                                   class="form-control" required>
-                            <div class="invalid-feedback">Introduce el CP.</div>
-                        </div>
-
-                        <div class="col-md-8 mb-3">
-                            <label for="city" class="form-label fw-semibold">
-                                Ciudad
-                            </label>
-                            <input type="text" id="city" name="city"
-                                   class="form-control" required>
-                            <div class="invalid-feedback">Introduce la ciudad.</div>
-                        </div>
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label fw-semibold">Ciudad</label>
+                        <input type="text" id="city" class="form-control" required>
                     </div>
+                </div>
 
-                    <!-- Provincia -->
-                    <div class="mb-3">
-                        <label for="province" class="form-label fw-semibold">
-                            Provincia
-                        </label>
-                        <input type="text" id="province" name="province"
-                               class="form-control" required>
-                        <div class="invalid-feedback">Introduce la provincia.</div>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Provincia</label>
+                    <input type="text" id="province" class="form-control" required>
+                </div>
 
-                    <!-- Pago -->
-                    <hr>
-                    <h6 class="fw-bold mt-3">Pago (simulado)</h6>
+                <!-- PAGO STRIPE -->
+                <hr>
+                <h6 class="fw-bold mt-3">Pago</h6>
 
-                    <div class="mb-3">
-                        <label for="cardNumber" class="form-label">
-                            Número de tarjeta
-                        </label>
-                        <input type="text" id="cardNumber" name="cardNumber"
-                               class="form-control" required>
-                        <div class="invalid-feedback">Introduce la tarjeta.</div>
-                    </div>
+                <div id="payment-element" class="mb-3"></div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="expiry" class="form-label">
-                                Expiración
-                            </label>
-                            <input type="text" id="expiry" name="expiry"
-                                   class="form-control" placeholder="MM/AA" required>
-                            <div class="invalid-feedback">Introduce la fecha.</div>
-                        </div>
+                <div id="payment-errors" class="alert alert-danger d-none"></div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="cvv" class="form-label">
-                                CVV
-                            </label>
-                            <input type="text" id="cvv" name="cvv"
-                                   class="form-control" required>
-                            <div class="invalid-feedback">Introduce el CVV.</div>
-                        </div>
-                    </div>
+                <button id="submit-btn" class="btn btn-primary w-100 btn-lg">
+                    <span id="btn-text">Confirmar compra</span>
+                    <span id="btn-spinner" class="d-none">
+                        <span class="spinner-border spinner-border-sm me-2"></span>Procesando...
+                    </span>
+                </button>
 
-                    <!-- Botones -->
-                    <button type="submit" class="btn btn-primary w-100 btn-lg">
-                        Confirmar compra
-                    </button>
+                <a th:href="@{/cart}" class="btn btn-outline-secondary w-100 mt-2">
+                    Volver al carrito
+                </a>
 
-                    <a th:href="@{/cart}" class="btn btn-outline-secondary w-100 mt-2">
-                        Volver al carrito
-                    </a>
-
-                </form>
             </div>
         </div>
 
-        <!-- Resumen del pedido -->
+        <!-- RESUMEN -->
         <div class="col-md-5">
             <div class="card border-0 shadow-sm rounded-3 p-4">
-                <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2 text-primary"></i>Resumen</h5>
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-receipt me-2 text-primary"></i>Resumen
+                </h5>
+
                 <div th:each="item : ${cart.items}" class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom">
-                    <img th:if="${not #lists.isEmpty(item.product.imagePaths)}"
-                         th:src="@{/uploads/{img}(img=${item.product.imagePaths[0]})}"
-                         class="rounded"
-                         style="width:44px; height:44px; object-fit:cover;"
-                         th:alt="${item.product.title}">
-                    <div th:if="${#lists.isEmpty(item.product.imagePaths)}"
-                         class="rounded bg-light d-flex align-items-center justify-content-center"
-                         style="width:44px; height:44px; flex-shrink:0;">
-                        <i class="bi bi-image text-muted small"></i>
-                    </div>
                     <div class="flex-grow-1 min-width-0">
-                        <div class="small fw-semibold text-truncate" th:text="${item.product.title}">Producto</div>
+                        <div class="small fw-semibold text-truncate"
+                             th:text="${item.product.title}">Producto</div>
                     </div>
                     <div class="small fw-bold text-nowrap"
-                         th:text="${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</div>
+                         th:text="${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 2, 'POINT')} + ' €'"></div>
                 </div>
+
                 <div class="d-flex justify-content-between mt-2">
                     <strong class="fs-5">Total</strong>
                     <strong class="fs-5 text-primary"
-                            th:text="${#numbers.formatDecimal(cart.total, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</strong>
+                            th:text="${#numbers.formatDecimal(cart.total, 1, 'COMMA', 2, 'POINT')} + ' €'"></strong>
                 </div>
             </div>
         </div>
+
     </div>
 </main>
 
 <div th:replace="~{layout/base :: footer}"></div>
-<div th:replace="~{layout/base :: scripts}"></div>
-<script>
-    (function() {
-        'use strict';
-        var forms = document.querySelectorAll('.needs-validation');
-        Array.prototype.slice.call(forms).forEach(function(form) {
-            form.addEventListener('submit', function(event) {
-                if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); }
-                form.classList.add('was-validated');
-            }, false);
+
+<script th:inline="javascript">
+    const publishableKey = /*[[${stripePublishableKey}]]*/ '';
+    const clientSecret = /*[[${clientSecret}]]*/ '';
+
+    const stripe = Stripe(publishableKey);
+    const elements = stripe.elements({ clientSecret });
+
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+
+        const street = document.getElementById('street').value;
+        const postalCode = document.getElementById('postalCode').value;
+        const city = document.getElementById('city').value;
+        const province = document.getElementById('province').value;
+
+        if (!street || !postalCode || !city || !province) {
+            showError('Completa todos los campos de envío');
+            return;
+        }
+
+        const address = `${street}, ${postalCode}, ${city}, ${province}`;
+
+        toggleLoading(true);
+
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: window.location.origin +
+                    '/cart/checkout/success?address=' + encodeURIComponent(address)
+            }
         });
-    })();
+
+        if (error) {
+            showError(error.message);
+            toggleLoading(false);
+        }
+    });
+
+    function showError(message) {
+        const el = document.getElementById('payment-errors');
+        el.textContent = message;
+        el.classList.remove('d-none');
+    }
+
+    function toggleLoading(isLoading) {
+        document.getElementById('btn-text').classList.toggle('d-none', isLoading);
+        document.getElementById('btn-spinner').classList.toggle('d-none', !isLoading);
+        document.getElementById('submit-btn').disabled = isLoading;
+    }
 </script>
+
 </body>
 </html>
