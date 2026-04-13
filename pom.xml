@@ -72,10 +72,11 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Email -->
+        <!-- Email via SendGrid HTTP API (no SMTP, funciona en Render) -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>com.sendgrid</groupId>
+            <artifactId>sendgrid-java</artifactId>
+            <version>4.10.2</version>
         </dependency>
 
         <!-- Tests -->
