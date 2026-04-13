@@ -56,7 +56,7 @@
                         <!-- Formulario login -->
                         <form method="POST" th:action="@{/login}" class="needs-validation" novalidate>
                             <div class="mb-4">
-                                <label for="username" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Usuario único</label>
+                                <label for="username" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Nombre de usuario</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
                                         <i class="bi bi-person text-muted"></i>
@@ -68,11 +68,11 @@
                                            autocomplete="username"
                                            required>
                                 </div>
-                                <div class="invalid-feedback">Aporta tu identificador.</div>
+                                <div class="invalid-feedback">Introduce el Nombre de usuario.</div>
                             </div>
 
                             <div class="mb-5">
-                                <label for="password" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Clave secreta</label>
+                                <label for="password" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Contraseña</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
                                         <i class="bi bi-key text-muted"></i>
@@ -84,7 +84,7 @@
                                            autocomplete="current-password"
                                            required>
                                 </div>
-                                <div class="invalid-feedback">Falta la clave.</div>
+                                <div class="invalid-feedback">Falta la Contraseña.</div>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 btn-lg shadow-none py-3 mb-4 rounded-3" style="font-family: 'Inter';">
