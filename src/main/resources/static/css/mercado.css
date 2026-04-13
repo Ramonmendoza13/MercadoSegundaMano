@@ -1,0 +1,121 @@
+/* =============================================================
+   Mercado Segunda Mano – Estilos globales (Editorial Orgánico)
+   ============================================================= */
+
+:root {
+    --brand-dark:   #0a3b2b;
+    --brand-main:   #0f4c3a;
+    --brand-light:  #e8f0ea;
+    --accent:       #d35400;
+    --bg-paper:     #faf9f6;
+    --text-main:    #1a1a1a;
+    --text-muted:   #666666;
+    --border-color: #e2e0d8;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+body {
+    background-color: var(--bg-paper);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+h1, h2, h3, h4, h5, h6, .navbar-brand, .section-title {
+    font-family: 'Outfit', sans-serif;
+}
+main { flex: 1; }
+
+/* ── Navbar ───────────────────────────────────────────────── */
+.navbar {
+    background-color: #fff !important;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.navbar-brand { font-weight: 800; font-size: 1.5rem; color: var(--brand-dark) !important; letter-spacing: -0.5px; }
+.navbar-brand span { color: var(--accent); }
+.navbar .nav-link { color: var(--text-main) !important; font-weight: 500; transition: color 0.15s; }
+.navbar .nav-link:hover { color: var(--brand-main) !important; }
+.navbar .search-input {
+    border-radius: 8px 0 0 8px;
+    border: 1px solid var(--border-color);
+    background: #fff;
+    color: var(--text-main);
+}
+.navbar .search-input:focus { border-color: var(--brand-main); box-shadow: none; }
+.navbar .btn-search {
+    border-radius: 0 8px 8px 0;
+    background-color: var(--brand-main);
+    border: 1px solid var(--brand-main);
+    color: #fff;
+    padding: 0.375rem 1rem;
+}
+.navbar .btn-search:hover { background-color: var(--brand-dark); }
+.navbar-toggler { border-color: var(--border-color); }
+.navbar-toggler-icon { filter: invert(0.8) sepia(1) hue-rotate(180deg); }
+
+/* ── Dropdown ─────────────────────────────────────────────── */
+.dropdown-menu { border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 12px; }
+.dropdown-item { font-size: 0.95rem; }
+.dropdown-item:hover { background-color: var(--brand-light); color: var(--brand-main); }
+
+/* ── Cards ────────────────────────────────────────────────── */
+.card {
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: none;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.product-card { overflow: hidden; }
+.product-card:hover { transform: translateY(-4px); border-color: var(--brand-main); }
+.product-card .card-img-top { height: 220px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+.product-card .price { font-size: 1.4rem; font-weight: 700; color: var(--brand-dark); }
+
+/* ── Badges ───────────────────────────────────────────────── */
+.badge-available { background-color: var(--brand-light) !important; color: var(--brand-main) !important; border: 1px solid var(--brand-main); font-weight: 600; }
+.badge-sold      { background-color: #fcebeb !important; color: #c0392b !important; border: 1px solid #c0392b; font-weight: 600; }
+
+/* ── Botones ──────────────────────────────────────────────── */
+.btn { font-family: 'Outfit', sans-serif; font-weight: 600; letter-spacing: 0.3px; border-radius: 8px; padding: 0.5rem 1.25rem; }
+.btn-primary { background-color: var(--brand-main); border-color: var(--brand-main); }
+.btn-primary:hover { background-color: var(--brand-dark); border-color: var(--brand-dark); }
+.btn-outline-primary { color: var(--brand-main); border-color: var(--brand-main); }
+.btn-outline-primary:hover { background-color: var(--brand-main); color: #fff; }
+.btn-outline-light { color: var(--text-main); border-color: var(--border-color); }
+.btn-outline-light:hover { background-color: var(--brand-light); color: var(--brand-main); border-color: var(--brand-main); }
+.btn-dark-custom { background-color: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+
+/* ── Sección ──────────────────────────────────────────────── */
+.section-title { font-weight: 800; color: var(--brand-dark); letter-spacing: -0.5px; margin-bottom: 1.5rem; }
+
+/* ── Tablas ───────────────────────────────────────────────── */
+.table { background-color: #fff; border: 1px solid var(--border-color); border-radius: 12px; }
+.table-dark { background-color: var(--brand-dark); color: #fff; }
+.table-dark th { background-color: var(--brand-dark) !important; font-family: 'Outfit', sans-serif; font-weight: 500; letter-spacing: 0.5px; border-bottom: none; }
+
+/* ── Footer ───────────────────────────────────────────────── */
+footer { background-color: var(--brand-dark); color: rgba(255,255,255,0.8); padding: 4rem 0 2rem; margin-top: auto; }
+footer h6 { font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
+footer a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.2s; }
+footer a:hover { color: #fff; text-decoration: underline; }
+
+/* ── Flash alerts ─────────────────────────────────────────── */
+.flash-container { position: fixed; top: 90px; right: 20px; z-index: 1060; min-width: 320px; max-width: 420px; }
+.alert { border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0,0,0,0.05); font-weight: 500; }
+
+/* ── Auth pages ───────────────────────────────────────────── */
+.auth-wrapper {
+    min-height: calc(100vh - 64px);
+    background-color: var(--brand-light);
+    display: flex;
+    align-items: center;
+}
+.auth-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: #fff;
+}

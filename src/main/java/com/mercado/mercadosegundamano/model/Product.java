@@ -5,6 +5,7 @@ import com.mercado.mercadosegundamano.enums.GearboxType;
 import com.mercado.mercadosegundamano.enums.HomeCondition;
 import com.mercado.mercadosegundamano.enums.ProductCategory;
 import com.mercado.mercadosegundamano.enums.ProductStatus;
+import com.mercado.mercadosegundamano.enums.TechType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -143,4 +144,9 @@ public abstract class Product {
     // Campos de hogar
     @Transient public HomeCondition getCondition()  { return null; }
     @Transient public String        getDimensions() { return null; }
+
+    // Campos de tecnología
+    @Transient public TechType getTechType()        { return null; }
+    @Transient public String   getStorageCapacity() { return null; }
+    @Transient public String   getRam()             { return null; }
 }

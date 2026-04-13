@@ -66,6 +66,12 @@
                        th:classappend="${param.category != null and param.category[0] == 'HOME'} ? ' border-primary bg-light fw-bold text-primary' : ' text-muted'">
                         <i class="bi bi-house me-3 fs-5"></i> Hogar
                     </a>
+                    <a th:href="@{/products(category='TECHNOLOGY')}"
+                       style="border: 1px solid transparent; border-radius: 8px; transition: all 0.2s;"
+                       class="list-group-item list-group-item-action d-flex align-items-center mb-1"
+                       th:classappend="${param.category != null and param.category[0] == 'TECHNOLOGY'} ? ' border-primary bg-light fw-bold text-primary' : ' text-muted'">
+                        <i class="bi bi-laptop me-3 fs-5"></i> Tecnología
+                    </a>
                 </div>
             </div>
 

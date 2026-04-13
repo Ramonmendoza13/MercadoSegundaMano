@@ -52,7 +52,7 @@
         <div class="container" style="max-width: 800px; position:relative; z-index:2;">
             <h1 class="display-4 fw-bold mb-4">Lo bueno tiene<br>una <span style="color: var(--accent);">segunda vida.</span></h1>
             <p class="lead mb-5" style="color: var(--text-muted); font-size: 1.25rem;">
-                Compra, vende y contribuye a un consumo más sostenible. Vehículos, ropa, hogar y objetos con historia que buscan un nuevo lugar.
+                Compra, vende y contribuye a un consumo más sostenible. Vehículos, tecnología, ropa, hogar y objetos con historia que buscan un nuevo lugar.
             </p>
             <div class="d-flex justify-content-center gap-3 flex-wrap mb-5">
                 <a th:href="@{/products}" class="btn btn-primary btn-lg fs-5 px-4 shadow-sm">
@@ -82,7 +82,7 @@
     <section class="container" style="margin-top: 6rem; margin-bottom: 6rem;">
         <h2 class="section-title text-center mb-5">Explora por categorías</h2>
         <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-3 col-sm-6">
                 <a th:href="@{/products(category='VEHICLE')}" class="text-decoration-none d-block h-100">
                     <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
                         <i class="bi bi-car-front mb-3" style="font-size: 3rem;"></i>
@@ -91,7 +91,7 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3 col-sm-6">
                 <a th:href="@{/products(category='CLOTHING')}" class="text-decoration-none d-block h-100">
                     <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
                         <i class="bi bi-bag mb-3" style="font-size: 3rem;"></i>
@@ -100,12 +100,21 @@
                     </div>
                 </a>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3 col-sm-6">
                 <a th:href="@{/products(category='HOME')}" class="text-decoration-none d-block h-100">
                     <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
                         <i class="bi bi-house mb-3" style="font-size: 3rem;"></i>
                         <h4 class="fw-bold mb-2">Hogar</h4>
                         <p class="mb-0" style="opacity:0.8;">Muebles y decoración</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <a th:href="@{/products(category='TECHNOLOGY')}" class="text-decoration-none d-block h-100">
+                    <div class="category-card p-5 text-center h-100 d-flex flex-column justify-content-center">
+                        <i class="bi bi-laptop mb-3" style="font-size: 3rem;"></i>
+                        <h4 class="fw-bold mb-2">Tecnología</h4>
+                        <p class="mb-0" style="opacity:0.8;">Móviles, portátiles y más</p>
                     </div>
                 </a>
             </div>

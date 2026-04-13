@@ -97,6 +97,7 @@ public class ProductController {
         model.addAttribute("fuelTypes", FuelType.values());
         model.addAttribute("gearboxTypes", GearboxType.values());
         model.addAttribute("homeConditions", HomeCondition.values());
+        model.addAttribute("techTypes", TechType.values());
 
         return "products/form";
     }
@@ -128,6 +129,13 @@ public class ProductController {
             // Campos especificos de hogar
             @RequestParam(required = false) HomeCondition condition,
             @RequestParam(required = false) String dimensions,
+            // Campos específicos de tecnología
+            @RequestParam(required = false) TechType techType,
+            @RequestParam(required = false) String techBrand,
+            @RequestParam(required = false) String techModel,
+            @RequestParam(required = false) String storageCapacity,
+            @RequestParam(required = false) String ram,
+            @RequestParam(required = false) String techColor,
             // Imagenes subidas desde el formulario
             // El formulario debe tener enctype="multipart/form-data"
             @RequestParam(required = false) List<MultipartFile> images,
@@ -165,6 +173,16 @@ public class ProductController {
                     h.setCondition(condition);
                     h.setDimensions(dimensions);
                     product = h;
+                }
+                case "TECHNOLOGY" -> {
+                    TechProduct t = new TechProduct();
+                    t.setTechType(techType);
+                    t.setBrand(techBrand);
+                    t.setModel(techModel);
+                    t.setStorageCapacity(storageCapacity);
+                    t.setRam(ram);
+                    t.setColor(techColor);
+                    product = t;
                 }
                 default -> throw new RuntimeException("Categoria no valida");
             }
@@ -209,6 +227,7 @@ public class ProductController {
         model.addAttribute("fuelTypes", FuelType.values());
         model.addAttribute("gearboxTypes", GearboxType.values());
         model.addAttribute("homeConditions", HomeCondition.values());
+        model.addAttribute("techTypes", TechType.values());
 
         return "products/form";
     }
@@ -238,6 +257,13 @@ public class ProductController {
             // Campos específicos de hogar
             @RequestParam(required = false) HomeCondition condition,
             @RequestParam(required = false) String dimensions,
+            // Campos específicos de tecnología
+            @RequestParam(required = false) TechType techType,
+            @RequestParam(required = false) String techBrand,
+            @RequestParam(required = false) String techModel,
+            @RequestParam(required = false) String storageCapacity,
+            @RequestParam(required = false) String ram,
+            @RequestParam(required = false) String techColor,
             // Imágenes
             @RequestParam(required = false) List<MultipartFile> images,
             @AuthenticationPrincipal UserDetails userDetails,
@@ -272,6 +298,13 @@ public class ProductController {
             } else if (product instanceof HomeProduct h) {
                 if (condition != null) h.setCondition(condition);
                 if (dimensions != null && !dimensions.isBlank()) h.setDimensions(dimensions);
+            } else if (product instanceof TechProduct t) {
+                if (techType != null) t.setTechType(techType);
+                if (techBrand != null && !techBrand.isBlank()) t.setBrand(techBrand);
+                if (techModel != null && !techModel.isBlank()) t.setModel(techModel);
+                if (storageCapacity != null && !storageCapacity.isBlank()) t.setStorageCapacity(storageCapacity);
+                if (ram != null && !ram.isBlank()) t.setRam(ram);
+                if (techColor != null && !techColor.isBlank()) t.setColor(techColor);
             }
 
             productService.updateProduct(id, product, images, currentUser);

@@ -191,6 +191,38 @@
                 </div>
             </div>
 
+            <!-- TECNOLOGÍA -->
+            <div th:if="${product instanceof T(com.mercado.mercadosegundamano.model.TechProduct)}"
+                 class="spec-card p-4 mb-5">
+                <h6 class="fw-bold mb-4" style="font-family: 'Outfit'; font-size: 1.1rem;"><i class="bi bi-laptop me-2" style="color: var(--accent);"></i>Especificaciones técnicas</h6>
+                <div class="row g-0">
+                    <div class="col-6 spec-item pe-3">
+                        <div class="detail-label">Tipo</div>
+                        <div class="fw-semibold" th:text="${product.techType?.displayName}">—</div>
+                    </div>
+                    <div class="col-6 spec-item ps-3" style="border-left: 1px solid var(--border-color);">
+                        <div class="detail-label">Marca</div>
+                        <div class="fw-semibold" th:text="${product.brand}">—</div>
+                    </div>
+                    <div class="col-6 spec-item pe-3">
+                        <div class="detail-label">Modelo</div>
+                        <div class="fw-semibold" th:text="${product.model}">—</div>
+                    </div>
+                    <div class="col-6 spec-item ps-3" style="border-left: 1px solid var(--border-color);">
+                        <div class="detail-label">Color</div>
+                        <div class="fw-semibold" th:text="${product.color}">—</div>
+                    </div>
+                    <div class="col-6 spec-item pe-3 border-bottom-0">
+                        <div class="detail-label">Almacenamiento</div>
+                        <div class="fw-semibold" th:text="${product.storageCapacity}">—</div>
+                    </div>
+                    <div class="col-6 spec-item ps-3 border-bottom-0" style="border-left: 1px solid var(--border-color);">
+                        <div class="detail-label">RAM</div>
+                        <div class="fw-semibold" th:text="${product.ram}">—</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- ACCIONES -->
             <!-- Añadir al carrito -->
             <div class="mb-4" sec:authorize="isAuthenticated()">

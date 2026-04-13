@@ -4,7 +4,8 @@ public enum ProductCategory {
 
     CLOTHING("Ropa"),
     VEHICLE("Vehiculos"),
-    HOME("Hogar");
+    HOME("Hogar"),
+    TECHNOLOGY("Tecnología");
 
     private final String displayName;
 

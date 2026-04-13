@@ -239,6 +239,53 @@
             </div>
         </div>
 
+        <!-- ==== SECCIÓN TECNOLOGÍA ==== -->
+        <div id="section-technology" class="card border-0 shadow-sm rounded-3 mb-4" style="display:none;">
+            <div class="card-header bg-white border-0 pt-3 pb-0">
+                <h5 class="fw-bold mb-0"><i class="bi bi-laptop me-2 text-primary"></i>Datos del dispositivo</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="tType" class="form-label fw-semibold">Tipo de dispositivo</label>
+                        <select id="tType" name="techType" class="form-select">
+                            <option value="">-- Selecciona --</option>
+                            <option th:each="tt : ${techTypes}"
+                                    th:value="${tt}"
+                                    th:text="${tt.displayName}"
+                                    th:selected="${product?.techType == tt}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tBrand" class="form-label fw-semibold">Marca</label>
+                        <input type="text" id="tBrand" name="techBrand" class="form-control"
+                               placeholder="Ej: Apple, Samsung, Lenovo..." th:value="${product?.brand}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tModel" class="form-label fw-semibold">Modelo</label>
+                        <input type="text" id="tModel" name="techModel" class="form-control"
+                               placeholder="Ej: iPhone 14, Galaxy S23..." th:value="${product?.model}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tColor" class="form-label fw-semibold">Color</label>
+                        <input type="text" id="tColor" name="techColor" class="form-control"
+                               placeholder="Ej: Negro, Plata, Azul..." th:value="${product?.color}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tStorage" class="form-label fw-semibold">Almacenamiento</label>
+                        <input type="text" id="tStorage" name="storageCapacity" class="form-control"
+                               placeholder="Ej: 256 GB, 1 TB..." th:value="${product?.storageCapacity}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="tRam" class="form-label fw-semibold">RAM</label>
+                        <input type="text" id="tRam" name="ram" class="form-control"
+                               placeholder="Ej: 8 GB, 16 GB..." th:value="${product?.ram}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Botones -->
         <div class="d-flex gap-3 justify-content-end">
             <a th:href="@{/my/products}" class="btn btn-outline-secondary">
@@ -263,6 +310,7 @@
         document.getElementById('section-vehicle').style.display = 'none';
         document.getElementById('section-clothing').style.display = 'none';
         document.getElementById('section-home').style.display = 'none';
+        document.getElementById('section-technology').style.display = 'none';
 
         if (value === 'VEHICLE') {
             document.getElementById('section-vehicle').style.display = 'block';
@@ -270,6 +318,8 @@
             document.getElementById('section-clothing').style.display = 'block';
         } else if (value === 'HOME') {
             document.getElementById('section-home').style.display = 'block';
+        } else if (value === 'TECHNOLOGY') {
+            document.getElementById('section-technology').style.display = 'block';
         }
     }
 
