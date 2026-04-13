@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="es"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Crear cuenta | Mercado Segunda Mano</title>
     <th:block th:replace="~{layout/base :: pageHead}"></th:block>
@@ -11,6 +11,7 @@
             display: flex;
             align-items: center;
         }
+
         .auth-card {
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -18,153 +19,163 @@
         }
     </style>
 </head>
+
 <body>
 
-<div th:replace="~{layout/base :: navbar}"></div>
+    <div th:replace="~{layout/base :: navbar}"></div>
 
-<div class="auth-wrapper py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-sm-9 col-md-8 col-lg-6">
-                <div class="card auth-card shadow-sm">
-                    <div class="card-body p-5">
-                        <!-- Logo / Título -->
-                        <div class="text-center mb-5">
-                            <div class="display-5 mb-3" style="color: var(--brand-dark);"><i class="bi bi-bezier2"></i></div>
-                            <h2 class="fw-bold" style="font-family: 'Outfit'; color: var(--brand-dark); letter-spacing: -1px;">Nuevo integrante</h2>
-                            <p class="text-muted small">Hazte parte de la red de oportunidades</p>
+    <div class="auth-wrapper py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-sm-9 col-md-8 col-lg-6">
+                    <div class="card auth-card shadow-sm">
+                        <div class="card-body p-5">
+                            <!-- Logo / Título -->
+                            <div class="text-center mb-5">
+                                <div class="display-5 mb-3" style="color: var(--brand-dark);"><i
+                                        class="bi bi-bezier2"></i></div>
+                                <h2 class="fw-bold"
+                                    style="font-family: 'Outfit'; color: var(--brand-dark); letter-spacing: -1px;">Nuevo
+                                    integrante</h2>
+                                <p class="text-muted small">Hazte parte de la red de oportunidades</p>
+                            </div>
+
+                            <!-- Error global -->
+                            <div th:if="${error}" class="alert border-0 py-3 d-flex align-items-center mb-4"
+                                style="background-color: #fdeaea; color: #e74c3c; border-radius: 8px;" role="alert">
+                                <i class="bi bi-shield-x me-3 fs-5"></i>
+                                <div th:text="${error}">Error en el registro.</div>
+                            </div>
+
+                            <!-- Formulario registro -->
+                            <form method="POST" th:action="@{/register}" th:object="${registerDto}"
+                                class="needs-validation" novalidate>
+
+                                <!-- Username -->
+                                <div class="mb-4">
+                                    <label for="username" class="form-label"
+                                        style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Nombre
+                                        de usuario</label>
+                                    <div class="input-group"
+                                        th:classappend="${#fields.hasErrors('username')} ? 'has-validation' : ''">
+                                        <span class="input-group-text bg-light border-end-0"
+                                            style="border-radius: 8px 0 0 8px;">
+                                            <i class="bi bi-person text-muted"></i>
+                                        </span>
+                                        <input type="text" id="username" th:field="*{username}"
+                                            class="form-control border-start-0 py-2"
+                                            style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
+                                            th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
+                                            placeholder="Nombre de usuario" autocomplete="username" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
+                                            th:errors="*{username}">Error</div>
+                                        <div class="invalid-feedback" th:unless="${#fields.hasErrors('username')}">
+                                            El nombre de usuario es obligatorio.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-4">
+                                    <label for="email" class="form-label"
+                                        style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Correo
+                                        electronico</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"
+                                            style="border-radius: 8px 0 0 8px;">
+                                            <i class="bi bi-envelope text-muted"></i>
+                                        </span>
+                                        <input type="email" id="email" th:field="*{email}"
+                                            class="form-control border-start-0 py-2"
+                                            style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
+                                            th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                            placeholder="nombre@email" autocomplete="email" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                                            th:errors="*{email}">Error</div>
+                                        <div class="invalid-feedback" th:unless="${#fields.hasErrors('email')}">
+                                            Introduce un correo válido.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="mb-4">
+                                    <label for="password" class="form-label"
+                                        style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"
+                                            style="border-radius: 8px 0 0 8px;">
+                                            <i class="bi bi-key text-muted"></i>
+                                        </span>
+                                        <input type="password" id="password" th:field="*{password}"
+                                            class="form-control border-start-0 py-2"
+                                            style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
+                                            th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                                            placeholder="Mínimo 8 caracteres" autocomplete="new-password" required
+                                            minlength="8">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                                            th:errors="*{password}">Error</div>
+                                        <div class="invalid-feedback" th:unless="${#fields.hasErrors('password')}">
+                                            Se requieren al menos 8 caracteres.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Confirmar Password -->
+                                <div class="mb-5">
+                                    <label for="confirmPassword" class="form-label"
+                                        style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Valida
+                                        tu Contraseña</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0"
+                                            style="border-radius: 8px 0 0 8px;">
+                                            <i class="bi bi-check2-circle text-muted"></i>
+                                        </span>
+                                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                                            class="form-control border-start-0 py-2"
+                                            style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
+                                            th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
+                                            placeholder="Confirma la clave" autocomplete="new-password" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}"
+                                            th:errors="*{confirmPassword}">Error</div>
+                                        <div class="invalid-feedback"
+                                            th:unless="${#fields.hasErrors('confirmPassword')}">
+                                            Las constraseñas deben coincidir.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit"
+                                    class="btn btn-primary w-100 btn-lg shadow-none py-3 mb-4 rounded-3"
+                                    style="font-family: 'Inter';">
+                                    Confirmar registro
+                                </button>
+                            </form>
+
+                            <p class="text-center text-muted mb-0" style="font-size: 0.95rem;">
+                                ¿Ya posees llave?
+                                <a th:href="@{/login}" class="fw-bold ms-1"
+                                    style="color: var(--brand-dark); text-decoration: underline;">Ingresa</a>
+                            </p>
                         </div>
-
-                        <!-- Error global -->
-                        <div th:if="${error}" class="alert border-0 py-3 d-flex align-items-center mb-4" style="background-color: #fdeaea; color: #e74c3c; border-radius: 8px;" role="alert">
-                            <i class="bi bi-shield-x me-3 fs-5"></i>
-                            <div th:text="${error}">Error en el registro.</div>
-                        </div>
-
-                        <!-- Formulario registro -->
-                        <form method="POST" th:action="@{/register}" th:object="${registerDto}"
-                              class="needs-validation" novalidate>
-
-                            <!-- Username -->
-                            <div class="mb-4">
-                                <label for="username" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Nombre de usuario</label>
-                                <div class="input-group"
-                                     th:classappend="${#fields.hasErrors('username')} ? 'has-validation' : ''">
-                                    <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
-                                        <i class="bi bi-person text-muted"></i>
-                                    </span>
-                                    <input type="text" id="username"
-                                           th:field="*{username}"
-                                           class="form-control border-start-0 py-2"
-                                           style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
-                                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
-                                           placeholder="Alias único"
-                                           autocomplete="username"
-                                           required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
-                                         th:errors="*{username}">Error</div>
-                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('username')}">
-                                        El nombre de usuario es obligatorio.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="mb-4">
-                                <label for="email" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Correo electronico</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
-                                        <i class="bi bi-envelope text-muted"></i>
-                                    </span>
-                                    <input type="email" id="email"
-                                           th:field="*{email}"
-                                           class="form-control border-start-0 py-2"
-                                           style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
-                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                                           placeholder="buzon@ejemplo.com"
-                                           autocomplete="email"
-                                           required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
-                                         th:errors="*{email}">Error</div>
-                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('email')}">
-                                        Introduce un correo válido.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mb-4">
-                                <label for="password" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Contraseña</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
-                                        <i class="bi bi-key text-muted"></i>
-                                    </span>
-                                    <input type="password" id="password"
-                                           th:field="*{password}"
-                                           class="form-control border-start-0 py-2"
-                                           style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
-                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                                           placeholder="Mínimo 8 caracteres"
-                                           autocomplete="new-password"
-                                           required minlength="8">
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
-                                         th:errors="*{password}">Error</div>
-                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('password')}">
-                                        Se requieren al menos 8 caracteres.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Confirmar Password -->
-                            <div class="mb-5">
-                                <label for="confirmPassword" class="form-label" style="font-weight: 600; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Valida tu Contraseña</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0" style="border-radius: 8px 0 0 8px;">
-                                        <i class="bi bi-check2-circle text-muted"></i>
-                                    </span>
-                                    <input type="password" id="confirmPassword"
-                                           th:field="*{confirmPassword}"
-                                           class="form-control border-start-0 py-2"
-                                           style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
-                                           th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
-                                           placeholder="Confirma la clave"
-                                           autocomplete="new-password"
-                                           required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}"
-                                         th:errors="*{confirmPassword}">Error</div>
-                                    <div class="invalid-feedback" th:unless="${#fields.hasErrors('confirmPassword')}">
-                                        Las constraseñas deben coincidir.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100 btn-lg shadow-none py-3 mb-4 rounded-3" style="font-family: 'Inter';">
-                                Confirmar registro
-                            </button>
-                        </form>
-
-                        <p class="text-center text-muted mb-0" style="font-size: 0.95rem;">
-                            ¿Ya posees llave?
-                            <a th:href="@{/login}" class="fw-bold ms-1" style="color: var(--brand-dark); text-decoration: underline;">Ingresa</a>
-                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div th:replace="~{layout/base :: scripts}"></div>
-<script>
-    (function() {
-        'use strict';
-        document.querySelectorAll('.needs-validation').forEach(function(form) {
-            form.addEventListener('submit', function(e) {
-                if (!form.checkValidity()) { e.preventDefault(); e.stopPropagation(); }
-                form.classList.add('was-validated');
+    <div th:replace="~{layout/base :: scripts}"></div>
+    <script>
+        (function () {
+            'use strict';
+            document.querySelectorAll('.needs-validation').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    if (!form.checkValidity()) { e.preventDefault(); e.stopPropagation(); }
+                    form.classList.add('was-validated');
+                });
             });
-        });
-    })();
-</script>
+        })();
+    </script>
 </body>
+
 </html>

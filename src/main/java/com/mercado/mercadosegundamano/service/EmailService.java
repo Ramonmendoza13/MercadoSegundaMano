@@ -9,6 +9,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,6 +29,7 @@ public class EmailService {
 
     // Envia un email de bienvenida al usuario recien registrado.
     // Se llama desde UserService despues de guardar el usuario en BD.
+    @Async
     public void sendWelcomeEmail(String toEmail, String username) {
 
         // SimpleMailMessage es el objeto que representa el correo.
@@ -58,6 +60,7 @@ public class EmailService {
     // ── Email al COMPRADOR ─────────────────────────────────────────────────────
     // Confirma su compra con el detalle de productos, precio total y direccion.
     // Usa MimeMessage para enviar HTML con estilos visuales.
+    @Async
     public void sendPurchaseConfirmationEmail(Order order) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -204,6 +207,7 @@ public class EmailService {
     // ── Emails al VENDEDOR ─────────────────────────────────────────────────────
     // Por cada vendedor distinto en el pedido, le manda un email con sus productos
     // vendidos, el comprador y la direccion a la que debe enviarlo.
+    @Async
     public void sendSaleNotificationEmails(Order order) {
 
         // Agrupamos los productos por vendedor para un email por vendedor
@@ -359,6 +363,7 @@ public class EmailService {
     }
     // ── Email al COMPRADOR: producto enviado ──────────────────────────────────
     // Notifica al comprador que el vendedor ha confirmado el envío de su producto.
+    @Async
     public void sendShippingNotificationEmail(Order order, Product product) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
