@@ -89,7 +89,7 @@
                                             class="form-control border-start-0 py-2"
                                             style="border-radius: 0 8px 8px 0; background-color: #fcfcfc;"
                                             th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                                            placeholder="nombre@email" autocomplete="email" required>
+                                            placeholder="nombre@email.com" autocomplete="email" required>
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
                                             th:errors="*{email}">Error</div>
                                         <div class="invalid-feedback" th:unless="${#fields.hasErrors('email')}">
