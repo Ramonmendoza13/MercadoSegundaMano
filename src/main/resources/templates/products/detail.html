@@ -27,7 +27,14 @@
             transition: border-color 0.2s;
         }
         .seller-card:hover { border-color: var(--brand-main); }
-        .carousel-inner img { height: 500px; object-fit: cover; border-radius: 12px; }
+        .carousel-inner img { 
+            max-height: 600px; 
+            height: auto; 
+            width: 100%;
+            object-fit: contain; 
+            border-radius: 12px; 
+            background-color: var(--brand-light, #f8f9fa);
+        }
         .carousel-placeholder { height: 500px; background: #fff; border: 1px dashed var(--border-color); border-radius: 12px; }
         .spec-item { padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
         .spec-item:last-child { border-bottom: none; }
