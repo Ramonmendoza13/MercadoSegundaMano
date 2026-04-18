@@ -40,7 +40,7 @@
                             <!-- Imagen miniatura -->
                             <td class="px-4 py-3">
                                 <img th:if="${not #lists.isEmpty(product.imagePaths)}"
-                                     th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
+                                     th:src="${product.imagePaths[0]}"
                                      th:alt="${product.title}"
                                      class="rounded-3"
                                      style="width:64px; height:64px; object-fit:cover; border: 1px solid var(--border-color);">

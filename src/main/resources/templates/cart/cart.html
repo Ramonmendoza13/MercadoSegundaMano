@@ -24,7 +24,7 @@
                         <!-- Imagen -->
                         <div style="flex-shrink:0;">
                             <img th:if="${not #lists.isEmpty(item.product.imagePaths)}"
-                                 th:src="@{/uploads/{img}(img=${item.product.imagePaths[0]})}"
+                                 th:src="${item.product.imagePaths[0]}"
                                  class="rounded-3"
                                  style="width:90px; height:90px; object-fit:cover; border: 1px solid var(--border-color);"
                                  th:alt="${item.product.title}">

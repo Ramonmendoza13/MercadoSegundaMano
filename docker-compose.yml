@@ -11,9 +11,6 @@ services:
 
     volumes:
       - h2_data:/app/data
-      # Volumen para las imagenes subidas
-      - images_data:/app/uploads
 
 volumes:
   h2_data:
-  images_data:

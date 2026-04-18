@@ -98,7 +98,7 @@
                         <p class="small text-muted mb-1">Imágenes actuales:</p>
                         <div class="d-flex flex-wrap gap-2">
                             <div th:each="img : ${product.imagePaths}" class="position-relative">
-                                <img th:src="@{/uploads/{img}(img=${img})}"
+                                <img th:src="${img}"
                                      class="rounded border"
                                      style="width: 80px; height: 80px; object-fit: cover;"
                                      alt="Imagen actual">

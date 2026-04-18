@@ -23,8 +23,7 @@ COPY --from=build /app/target/*.jar app.jar
 
 # Carpeta para H2
 RUN mkdir -p /app/data
-# Carpeta para las imagenes subidas
-RUN mkdir -p /app/uploads
+
 
 EXPOSE 8080
 

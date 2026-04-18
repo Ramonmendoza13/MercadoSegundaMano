@@ -87,7 +87,7 @@
 
                 <div th:each="item : ${cart.items}" class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom" style="border-color: rgba(0,0,0,0.1) !important;">
                     <img th:if="${not #lists.isEmpty(item.product.imagePaths)}"
-                         th:src="@{/uploads/{img}(img=${item.product.imagePaths[0]})}"
+                         th:src="${item.product.imagePaths[0]}"
                          class="rounded"
                          style="width:48px; height:48px; object-fit:cover; border: 1px solid rgba(0,0,0,0.1);"
                          th:alt="${item.product.title}">

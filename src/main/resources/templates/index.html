@@ -136,7 +136,7 @@
                     <!-- Imagen -->
                     <div style="position: relative; height: 240px; background: #fdfdfc;">
                         <img th:if="${not #lists.isEmpty(product.imagePaths)}"
-                             th:src="@{/uploads/{img}(img=${product.imagePaths[0]})}"
+                             th:src="${product.imagePaths[0]}"
                              th:alt="${product.title}"
                              style="width:100%; height:240px; object-fit:cover;">
                         <div th:if="${#lists.isEmpty(product.imagePaths)}"
