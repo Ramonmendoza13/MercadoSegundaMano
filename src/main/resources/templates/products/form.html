@@ -312,14 +312,30 @@
         document.getElementById('section-home').style.display = 'none';
         document.getElementById('section-technology').style.display = 'none';
 
+        // Limpiar el atributo required de todos los inputs de categorías
+        var allCategoryInputs = document.querySelectorAll('#section-vehicle input, #section-vehicle select, #section-clothing input, #section-clothing select, #section-home input, #section-home select, #section-technology input, #section-technology select');
+        allCategoryInputs.forEach(function(el) {
+            el.removeAttribute('required');
+        });
+
+        var activeSectionId = null;
         if (value === 'VEHICLE') {
-            document.getElementById('section-vehicle').style.display = 'block';
+            activeSectionId = 'section-vehicle';
         } else if (value === 'CLOTHING') {
-            document.getElementById('section-clothing').style.display = 'block';
+            activeSectionId = 'section-clothing';
         } else if (value === 'HOME') {
-            document.getElementById('section-home').style.display = 'block';
+            activeSectionId = 'section-home';
         } else if (value === 'TECHNOLOGY') {
-            document.getElementById('section-technology').style.display = 'block';
+            activeSectionId = 'section-technology';
+        }
+
+        if (activeSectionId) {
+            document.getElementById(activeSectionId).style.display = 'block';
+            // Añadir required a los campos de la categoría seleccionada
+            var activeInputs = document.querySelectorAll('#' + activeSectionId + ' input, #' + activeSectionId + ' select');
+            activeInputs.forEach(function(el) {
+                el.setAttribute('required', 'required');
+            });
         }
     }
 

@@ -48,6 +48,32 @@ El proyecto está configurado en **Modo Prueba** para la pasarela de pagos. Pued
 > - **Fecha de expiración:** Cualquier fecha futura (ej. `12/28`).
 > - **CVC:** Cualquier número de 3 dígitos (ej. `123`).
 
-## 🚀 Despliegue
+## 🚀 Despliegue en Render
 
 La aplicación se encuentra desplegada gratuitamente en **Render**. Debido a las limitaciones de los planes gratuitos (Free Tier), es posible que la aplicación tarde unos segundos en "despertar" si no ha recibido tráfico recientemente. ¡Gracias por la paciencia!
+
+## 🐳 Ejecución Local y Docker
+
+Para levantar el proyecto en tu propia máquina, asegúrate de configurar las siguientes variables de entorno (ya sea en el sistema global o pasándolas al proceso de tu IDE):
+- `SENDGRID_API_KEY`: Tu clave de SendGrid.
+- `MAIL_FROM`: El correo remitente registrado en SendGrid.
+- `STRIPE_SECRET_KEY`: Tu clave privada de Stripe (ej: `sk_test_...`).
+- `STRIPE_PUBLISHABLE_KEY`: Tu clave pública de Stripe (ej: `pk_test_...`).
+
+### Opción 1: Ejecución Local Tradicional (Maven)
+1. Clona el repositorio y accede a la carpeta del proyecto.
+2. Ejecuta la aplicación usando el wrapper de Maven integrado:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+3. Accede a la aplicación en `http://localhost:8080`.
+
+### Opción 2: Usar Docker Compose
+
+El proyecto incluye archivos `Dockerfile` y `docker-compose.yml` preconfigurados con volúmenes para preservar la base de datos (H2) y las imágenes subidas.
+1. Crea un archivo `.env` en la raíz del proyecto o añade directamente tus credenciales de entorno en el `docker-compose.yml` (sección `environment` si la habilitas). Alternativamente, simplemente inyéctalas en tu sistema en el momento de construir.
+2. Construye y levanta los servicios utilizando detatched mode:
+   ```bash
+   docker-compose up --build -d
+   ```
+3. Accede a la aplicación en `http://localhost:8080`. Para detener el servidor ejecuta `docker-compose down`.
