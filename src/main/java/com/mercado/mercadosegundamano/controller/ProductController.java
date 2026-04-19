@@ -142,6 +142,11 @@ public class ProductController {
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes) {
 
+        if (title != null && title.length() > 255 || description != null && description.length() > 255) {
+            redirectAttributes.addFlashAttribute("error", "El título o la descripción no pueden superar los 255 caracteres.");
+            return "redirect:/my/products/new";
+        }
+
         try {
             User currentUser = getCurrentUser(userDetails);
 
@@ -268,6 +273,11 @@ public class ProductController {
             @RequestParam(required = false) List<MultipartFile> images,
             @AuthenticationPrincipal UserDetails userDetails,
             RedirectAttributes redirectAttributes) {
+
+        if (title != null && title.length() > 255 || description != null && description.length() > 255) {
+            redirectAttributes.addFlashAttribute("error", "El título o la descripción no pueden superar los 255 caracteres.");
+            return "redirect:/my/products/" + id + "/edit";
+        }
 
         try {
             User currentUser = getCurrentUser(userDetails);

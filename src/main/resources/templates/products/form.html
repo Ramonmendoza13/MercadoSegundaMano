@@ -74,7 +74,7 @@
                     <label for="description" class="form-label fw-semibold">Descripción <span class="text-danger">*</span></label>
                     <textarea id="description" name="description" class="form-control" rows="4"
                               placeholder="Describe el estado, características y cualquier detalle relevante..."
-                              th:text="${product?.description}" required></textarea>
+                              th:text="${product?.description}" required maxlength="255"></textarea>
                     <div class="invalid-feedback">La descripción es obligatoria.</div>
                 </div>
 
