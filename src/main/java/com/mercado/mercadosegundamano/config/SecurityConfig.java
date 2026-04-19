@@ -40,14 +40,12 @@ public class SecurityConfig {
                         // Registro y login
                         .requestMatchers("/register", "/login").permitAll()
 
-                        // Imagenes subidas por usuarios (necesario para verlas en el catalogo)
-                        .requestMatchers("/uploads/**").permitAll()
+                        // Test Ping y mantenear web actriva evitando que render la apage
+                        .requestMatchers("/ping").permitAll()
 
                         // Recursos estaticos del frontend
                         .requestMatchers("/css/**", "/js/**").permitAll()
 
-                        // Consola web de H2 (solo para desarrollo)
-                        .requestMatchers("/h2-console/**").permitAll()
 
                         // ── Rutas PRIVADAS ──────────────────────────────────────
                         // Cualquier otra ruta requiere estar autenticado
