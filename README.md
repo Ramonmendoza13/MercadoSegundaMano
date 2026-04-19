@@ -27,11 +27,12 @@ La aplicación simula un marketplace completo de compra y venta de artículos de
 ### Stack Tecnológico:
 - **Backend:** Java 21, Spring Boot 3.2.5
 - **Seguridad:** Spring Security (con CSRF y encriptación de contraseñas)
-- **Base de Datos:** H2 Database / Spring Data JPA
+- **Base de Datos:** PostgreSQL (Neon) / Spring Data JPA
 - **Frontend:** Thymeleaf, HTML5, CSS3, Bootstrap 5 (Diseño 'Editorial Orgánico')
 - **Servicios Externos:** 
   - Stripe API (Pagos)
-  - JavaMailSender (Correos electrónicos)
+  - SendGrid API (Correos electrónicos)
+  - Cloudinary (Almacenamiento de imágenes en la nube)
 
 ## 💳 Datos de prueba para la Pasarela de Pago
 
@@ -54,7 +55,11 @@ La aplicación se encuentra desplegada gratuitamente en **Render**. Debido a las
 
 ## 🐳 Ejecución Local y Docker
 
-Para levantar el proyecto en tu propia máquina, asegúrate de configurar las siguientes variables de entorno (ya sea en el sistema global o pasándolas al proceso de tu IDE):
+Para levantar el proyecto en tu propia máquina, asegúrate de configurar las siguientes variables de entorno (ya sea en el sistema global, pasándolas al proceso de tu IDE o creando un archivo `.env`):
+- `DB_URL`: URL de conexión a tu base de datos PostgreSQL (Neon).
+- `DB_USERNAME`: Usuario de la base de datos.
+- `DB_PASSWORD`: Contraseña de la base de datos.
+- `CLOUDINARY_URL`: Tu credencial de Cloudinary (ej: `cloudinary://...`).
 - `SENDGRID_API_KEY`: Tu clave de SendGrid.
 - `MAIL_FROM`: El correo remitente registrado en SendGrid.
 - `STRIPE_SECRET_KEY`: Tu clave privada de Stripe (ej: `sk_test_...`).
@@ -70,8 +75,8 @@ Para levantar el proyecto en tu propia máquina, asegúrate de configurar las si
 
 ### Opción 2: Usar Docker Compose
 
-El proyecto incluye archivos `Dockerfile` y `docker-compose.yml` preconfigurados con volúmenes para preservar la base de datos (H2) y las imágenes subidas.
-1. Crea un archivo `.env` en la raíz del proyecto o añade directamente tus credenciales de entorno en el `docker-compose.yml` (sección `environment` si la habilitas). Alternativamente, simplemente inyéctalas en tu sistema en el momento de construir.
+El proyecto incluye archivos `Dockerfile` y `docker-compose.yml` preconfigurados para levantar la aplicación fácilmente.
+1. Crea un archivo `.env` en la raíz del proyecto para alojar tus credenciales de entorno.
 2. Construye y levanta los servicios utilizando detatched mode:
    ```bash
    docker-compose up --build -d
